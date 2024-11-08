@@ -1,6 +1,7 @@
 import struct
 import can
 
+
 # common code
 def make_id(id_src, id_dst, priority, port) -> int:
     msg = 0
@@ -14,11 +15,31 @@ def make_id(id_src, id_dst, priority, port) -> int:
     msg = msg | ((id_src & 0b1111111111) << 0)
     return msg
 
+
+def src_id_from_canid(canid: int) -> int:
+    return canid & 0b1111111111
+
+
+def port_from_canid(canid: int) -> int:
+    return (canid >> 20) & 0b11111
+
+
+def payload_byte(data) -> int:
+    return data[0]
+
+
 def make_payload_float(num: float) -> list:
     return list(struct.pack("f", num))
 
+
+def make_payload_byte(num: int) -> list:
+    return list(struct.pack("B", num))
+
+
 def send_command(bus, id_src, id_dst, priority, port, payload):
-    msg = can.Message(arbitration_id=make_id(id_src, id_dst, priority, port),
-            data=payload, is_extended_id=True)
+    msg = can.Message(
+        arbitration_id=make_id(id_src, id_dst, priority, port),
+        data=payload,
+        is_extended_id=True,
+    )
     bus.send(msg)
-    
