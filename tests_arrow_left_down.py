@@ -53,6 +53,19 @@ class ManPressTest(BaseGaugeTest):
         time.sleep(2)
         self.send_command_2(port=1, payload=make_payload_float(0))
 
+class RPMTest(BaseGaugeTest):
 
+    gauge_id = 21
+
+    def test_man_press(self):
+        self.send_command_2(port=0, payload=make_payload_float(3500))
+        time.sleep(2)
+        self.send_command_2(port=0, payload=make_payload_float(2000))
+        time.sleep(2)
+        self.send_command_2(port=0, payload=make_payload_float(1500))
+        time.sleep(2)
+        self.send_command_2(port=0, payload=make_payload_float(0))
+
+  
 if __name__ == "__main__":
     unittest.main()
