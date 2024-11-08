@@ -1,12 +1,10 @@
 import can
-
 import time
 import unittest
 
 from common import *
 
 # tests!!
-
 
 def setUpModule():
     global bus
@@ -63,5 +61,18 @@ class AttIndicatorTests(BaseGaugeTest):
         time.sleep(1)
         self.send_command_2(port=1, payload=make_payload_float(0))
 
+class AltimeterTests(BaseGaugeTest):
+  
+    gauge_id = 17
 
-unittest.main() # run all tests
+    def test_basic(self):
+        self.send_command_2(port=0, payload=make_payload_float(0))
+        time.sleep(1)
+        self.send_command_2(port=0, payload=make_payload_float(1000))
+        time.sleep(1)
+        self.send_command_2(port=0, payload=make_payload_float(2000))
+        time.sleep(1)
+        self.send_command_2(port=0, payload=make_payload_float(5000))
+        
+if __name__ == '__main__':
+    unittest.main()
