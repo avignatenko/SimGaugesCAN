@@ -1,0 +1,4 @@
+{
+    "channel": "/dev/tty.usbmodem1101",
+    "ttyBaudrate": "4000000"
+}

@@ -12,10 +12,11 @@ from common import *
 
 def setUpModule():
     global bus
+    config = read_config()
     bus = can.interface.Bus(
         interface="slcan",
-        channel="/dev/tty.usbmodem1101",
-        ttyBaudrate=4000000,
+        channel=config["channel"],
+        ttyBaudrate=config["ttyBaudrate"],
         bitrate=1000000,
     )
 
@@ -23,13 +24,11 @@ def setUpModule():
 def tearDownModule():
     bus.shutdown()
 
-
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
         send_command(
             bus, id_src=1, id_dst=self.gauge_id, priority=0, port=port, payload=payload
         )
-
 
 class ManPressTest(BaseGaugeTest):
 
@@ -53,6 +52,7 @@ class ManPressTest(BaseGaugeTest):
         time.sleep(2)
         self.send_command_2(port=1, payload=make_payload_float(0))
 
+
 class RPMTest(BaseGaugeTest):
 
     gauge_id = 21
@@ -66,6 +66,37 @@ class RPMTest(BaseGaugeTest):
         time.sleep(2)
         self.send_command_2(port=0, payload=make_payload_float(0))
 
-  
+
+class BottomPanelTest(BaseGaugeTest):
+
+    gauge_id = 23
+
+    def test_gear_lights(self):
+        for i in range(4):
+            self.send_command_2(port=i, payload=make_payload_byte(1))
+            time.sleep(0.5)
+        for i in range(4):
+            self.send_command_2(port=i, payload=make_payload_byte(0))
+            time.sleep(0.5)
+
+    def test_buttons_manual(self):
+
+        ports_received = []
+        for msg in bus:
+            port = port_from_canid(msg.arbitration_id)
+            if (
+                src_id_from_canid(msg.arbitration_id) == self.gauge_id
+                and port >= 4
+                and port <= 10
+            ):
+                print(port)
+                print(msg.data)
+                if port not in ports_received:
+                    ports_received.append(port)
+                    print(f"Total: {len(ports_received)}")
+                if len(ports_received) == 7:
+                    break
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,7 @@
 import struct
 import can
+import json
+import unittest
 
 
 # common code
@@ -43,3 +45,9 @@ def send_command(bus, id_src, id_dst, priority, port, payload):
         is_extended_id=True,
     )
     bus.send(msg)
+
+
+def read_config():
+    with open("config.json", "r") as file:
+        data = json.load(file)
+        return data

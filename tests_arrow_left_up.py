@@ -12,10 +12,11 @@ from common import *
 
 def setUpModule():
     global bus
+    config = read_config()
     bus = can.interface.Bus(
         interface="slcan",
-        channel="/dev/tty.usbmodem1101",
-        ttyBaudrate=4000000,
+        channel=config["channel"],
+        ttyBaudrate=config["ttyBaudrate"],
         bitrate=1000000,
     )
 
@@ -27,7 +28,12 @@ def tearDownModule():
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
         send_command(
-            bus, id_src=1, id_dst=self.gauge_id, priority=0, port=port, payload=payload
+            bus,
+            id_src=1,
+            id_dst=self.gauge_id,
+            priority=0,
+            port=port,
+            payload=payload,
         )
 
 
@@ -264,7 +270,6 @@ class Indicators2Tests(BaseGaugeTest):
         time.sleep(2)
         self.send_command_2(port=1, payload=make_payload_float(0))
 
-   
 
 if __name__ == "__main__":
     unittest.main()
