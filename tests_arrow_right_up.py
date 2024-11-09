@@ -70,6 +70,9 @@ class TransponderTest(BaseGaugeTest):
 
     def test_buttons_squawk_manual(self):
 
+        # enable voltage
+        self.send_command_2(port=1, payload=make_payload_byte(12))
+
         for msg in bus:
             port = port_from_canid(msg.arbitration_id)
             if (
