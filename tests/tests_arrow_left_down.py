@@ -6,13 +6,11 @@
 import can
 import time
 import unittest
-
-from common import *
-
+import cansimmanager
 
 def setUpModule():
     global bus
-    config = read_config()
+    config = cansimmanager.read_config()
     bus = can.interface.Bus(
         interface="slcan",
         channel=config["channel"],
@@ -26,7 +24,7 @@ def tearDownModule():
 
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
-        send_command(
+        cansimmanager.send_command(
             bus, id_src=1, id_dst=self.gauge_id, priority=0, port=port, payload=payload
         )
 
@@ -35,22 +33,22 @@ class ManPressTest(BaseGaugeTest):
     gauge_id = 22
 
     def test_man_press(self):
-        self.send_command_2(port=0, payload=make_payload_float(20))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(20))
         time.sleep(2)
-        self.send_command_2(port=0, payload=make_payload_float(45))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(45))
         time.sleep(2)
-        self.send_command_2(port=0, payload=make_payload_float(30))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(30))
         time.sleep(2)
-        self.send_command_2(port=0, payload=make_payload_float(0))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(0))
 
     def test_hallons_per_hour(self):
-        self.send_command_2(port=1, payload=make_payload_float(20))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(20))
         time.sleep(2)
-        self.send_command_2(port=1, payload=make_payload_float(15))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(15))
         time.sleep(2)
-        self.send_command_2(port=1, payload=make_payload_float(10))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(10))
         time.sleep(2)
-        self.send_command_2(port=1, payload=make_payload_float(0))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(0))
 
 
 class RPMTest(BaseGaugeTest):
@@ -58,13 +56,13 @@ class RPMTest(BaseGaugeTest):
     gauge_id = 21
 
     def test_man_press(self):
-        self.send_command_2(port=0, payload=make_payload_float(3500))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(3500))
         time.sleep(2)
-        self.send_command_2(port=0, payload=make_payload_float(2000))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(2000))
         time.sleep(2)
-        self.send_command_2(port=0, payload=make_payload_float(1500))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(1500))
         time.sleep(2)
-        self.send_command_2(port=0, payload=make_payload_float(0))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(0))
 
 
 class BottomPanelTest(BaseGaugeTest):
@@ -73,19 +71,19 @@ class BottomPanelTest(BaseGaugeTest):
 
     def test_gear_lights(self):
         for i in range(4):
-            self.send_command_2(port=i, payload=make_payload_byte(1))
+            self.send_command_2(port=i, payload=cansimmanager.make_payload_byte(1))
             time.sleep(0.5)
         for i in range(4):
-            self.send_command_2(port=i, payload=make_payload_byte(0))
+            self.send_command_2(port=i, payload=cansimmanager.make_payload_byte(0))
             time.sleep(0.5)
 
     def test_buttons_manual(self):
 
         ports_received = []
         for msg in bus:
-            port = port_from_canid(msg.arbitration_id)
+            port = cansimmanager.port_from_canid(msg.arbitration_id)
             if (
-                src_id_from_canid(msg.arbitration_id) == self.gauge_id
+                cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id
                 and port >= 4
                 and port <= 10
             ):

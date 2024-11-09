@@ -2,13 +2,12 @@
 import can
 import time
 import unittest
-
-from common import *
+import cansimmanager
 
 
 def setUpModule():
     global bus
-    config = read_config()
+    config = cansimmanager.read_config()
     bus = can.interface.Bus(
         interface="slcan",
         channel=config["channel"],
@@ -23,7 +22,7 @@ def tearDownModule():
 
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
-        send_command(
+        cansimmanager.send_command(
             bus,
             id_src=1,
             id_dst=self.gauge_id,
@@ -40,7 +39,7 @@ class FuelSwitchTest(BaseGaugeTest):
     def test_fuel_switch_manual(self):
 
         for msg in bus:
-            if src_id_from_canid(msg.arbitration_id) == self.gauge_id:
+            if cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
                 print(msg.data)
                 break
 
@@ -53,8 +52,8 @@ class ButtonSwitchTest(BaseGaugeTest):
 
         ports_received = []
         for msg in bus:
-            port = port_from_canid(msg.arbitration_id)
-            if src_id_from_canid(msg.arbitration_id) == self.gauge_id:
+            port = cansimmanager.port_from_canid(msg.arbitration_id)
+            if cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
                 print(port)
                 print(msg.data)
                 if port not in ports_received:
@@ -71,12 +70,12 @@ class TransponderTest(BaseGaugeTest):
     def test_buttons_squawk_manual(self):
 
         # enable voltage
-        self.send_command_2(port=1, payload=make_payload_byte(12))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_byte(12))
 
         for msg in bus:
-            port = port_from_canid(msg.arbitration_id)
+            port = cansimmanager.port_from_canid(msg.arbitration_id)
             if (
-                src_id_from_canid(msg.arbitration_id) == self.gauge_id
+                cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id
                 and port == 1
                 and msg.dlc == 2
             ):
@@ -88,9 +87,9 @@ class TransponderTest(BaseGaugeTest):
     def test_buttons_selector_manual(self):
 
         for msg in bus:
-            port = port_from_canid(msg.arbitration_id)
+            port = cansimmanager.port_from_canid(msg.arbitration_id)
             if (
-                src_id_from_canid(msg.arbitration_id) == self.gauge_id
+                cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id
                 and port == 0
                 and msg.dlc == 1
             ):
@@ -99,12 +98,12 @@ class TransponderTest(BaseGaugeTest):
 
     def test_button(self):
         # enable voltage
-        self.send_command_2(port=1, payload=make_payload_byte(12))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_byte(12))
 
         for msg in bus:
-            port = port_from_canid(msg.arbitration_id)
+            port = cansimmanager.port_from_canid(msg.arbitration_id)
             if (
-                src_id_from_canid(msg.arbitration_id) == self.gauge_id
+                cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id
                 and port == 2
                 and msg.dlc == 1
             ):
@@ -113,15 +112,15 @@ class TransponderTest(BaseGaugeTest):
 
     def test_led(self):
         # enable voltage
-        self.send_command_2(port=1, payload=make_payload_byte(12))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_byte(12))
         # send led 0
-        self.send_command_2(port=2, payload=make_payload_byte(0))
+        self.send_command_2(port=2, payload=cansimmanager.make_payload_byte(0))
         time.sleep(1)
-        self.send_command_2(port=2, payload=make_payload_byte(1))
+        self.send_command_2(port=2, payload=cansimmanager.make_payload_byte(1))
         time.sleep(1)
-        self.send_command_2(port=2, payload=make_payload_byte(0))
+        self.send_command_2(port=2, payload=cansimmanager.make_payload_byte(0))
         # disable voltage
-        self.send_command_2(port=1, payload=make_payload_byte(0))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_byte(0))
 
 
 if __name__ == "__main__":

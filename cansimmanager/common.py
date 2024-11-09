@@ -1,8 +1,6 @@
 import struct
 import can
 import json
-import unittest
-
 
 # common code
 def make_id(id_src, id_dst, priority, port) -> int:
