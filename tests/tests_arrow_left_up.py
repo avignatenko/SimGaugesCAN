@@ -8,6 +8,7 @@ import time
 import unittest
 import cansimmanager
 
+
 def setUpModule():
     global bus
     config = cansimmanager.read_config()
@@ -68,16 +69,16 @@ class AttIndicatorTests(BaseGaugeTest):
     gauge_id = 28
 
     def test_ver(self):
-        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(-10))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(-30))
         time.sleep(1)
-        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(10))
+        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(30))
         time.sleep(1)
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(0))
 
     def test_hor(self):
-        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(-50))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(-30))
         time.sleep(1)
-        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(50))
+        self.send_command_2(port=1, payload=cansimmanager.make_payload_float(30))
         time.sleep(1)
         self.send_command_2(port=1, payload=cansimmanager.make_payload_float(0))
 
@@ -89,7 +90,9 @@ class AltimeterTests(BaseGaugeTest):
     def test_basic(self):
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(0))
         time.sleep(1)
-        self.send_command_2(port=0, payload=cansimmanager.make_payload_float(-2000))  # why - ???
+        self.send_command_2(
+            port=0, payload=cansimmanager.make_payload_float(-2000)
+        )  # why - ???
         time.sleep(1)
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(-5000))
         time.sleep(1)
@@ -132,7 +135,7 @@ class DirIndicatorTests(BaseGaugeTest):
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(30))
         time.sleep(1)
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(0))
-
+  
     def test_hor(self):
         self.send_command_2(port=1, payload=cansimmanager.make_payload_float(-30))
         time.sleep(1)

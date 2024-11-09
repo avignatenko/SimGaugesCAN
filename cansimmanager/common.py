@@ -2,6 +2,7 @@ import struct
 import can
 import json
 
+
 # common code
 def make_id(id_src, id_dst, priority, port) -> int:
     msg = 0
@@ -36,12 +37,17 @@ def make_payload_byte(num: int) -> list:
     return list(struct.pack("B", num))
 
 
-def send_command(bus, id_src, id_dst, priority, port, payload):
+def make_message(id_src, id_dst, priority, port, payload):
     msg = can.Message(
         arbitration_id=make_id(id_src, id_dst, priority, port),
         data=payload,
         is_extended_id=True,
     )
+    return msg
+
+
+def send_command(bus, id_src, id_dst, priority, port, payload):
+    msg = make_message(id_src, id_dst, priority, port, payload)
     bus.send(msg)
 
 
