@@ -53,18 +53,19 @@ async def main() -> None:
     sim = Sim()
     try:
         uri = "ws://localhost:8765"
-        #await sim.connect(uri)
+        await sim.connect(uri)
     except OSError as e:
         logging.error("Sim error: %s", e)
         exit(-1)
 
     logging.info("CAN bus init")
 
+    '''
     bus = can.interface.Bus("test", bustype="virtual")
     bus_test_sender = can.interface.Bus('test', bustype='virtual')
     bus_test_sender.send(common.make_message(29, 0, 0, 0, []))
-
     '''
+    
     try:
         bus = can.interface.Bus(
             interface="slcan",
@@ -76,7 +77,7 @@ async def main() -> None:
         logging.error("CAN error: %s", e)
         bus.shutdown()
         exit(-1)
-    '''
+    
 
     # run can receiver and websockets receiver async
     logging.info("Starting can and websockets listeners")
