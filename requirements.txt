@@ -3,5 +3,6 @@ packaging==24.2
 pyserial==3.5
 python-can==4.4.2
 typing_extensions==4.12.2
+uvloop==0.21.0
 websockets==14.0
 wrapt==1.16.0

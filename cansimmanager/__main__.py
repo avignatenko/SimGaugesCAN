@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sys
 import can
+import uvloop
 
 from . import common
 from .devices import Devices
@@ -87,4 +88,5 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    uvloop.run(main())
+    #asyncio.run(main())
