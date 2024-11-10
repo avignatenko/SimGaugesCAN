@@ -19,6 +19,7 @@ async def can_handler(bus: can.Bus, sim, devices: Devices):
 
     while True:
         message = await reader.get_message()
+        logger.debug("CAN message: %s", message.arbitration_id)
         cansim_id = common.src_id_from_canid(message.arbitration_id)
         for device in devices.get_from_cansim_id(cansim_id):
             await device.handle_can_message(message, sim)
@@ -51,17 +52,18 @@ async def main() -> None:
     sim = Sim()
     try:
         uri = "ws://localhost:8765"
-        await sim.connect(uri)
+        #await sim.connect(uri)
     except OSError as e:
         logging.error("Sim error: %s", e)
         exit(-1)
 
     logging.info("CAN bus init")
+
     bus = can.interface.Bus("test", bustype="virtual")
+    bus_test_sender = can.interface.Bus('test', bustype='virtual')
+    bus_test_sender.send(common.make_message(29, 0, 0, 0, []))
 
-    # bus_test_sender = can.interface.Bus('test', bustype='virtual')
-    # bus_test_sender.send(common.make_message(29, 0, 0, 0, []))
-
+    '''
     try:
         bus = can.interface.Bus(
             interface="slcan",
@@ -69,11 +71,11 @@ async def main() -> None:
             ttyBaudrate=config["ttyBaudrate"],
             bitrate=1000000,
         )
-
     except can.CanInitializationError as e:
         logging.error("CAN error: %s", e)
         bus.shutdown()
         exit(-1)
+    '''
 
     # run can receiver and websockets receiver async
     logging.info("Starting can and websockets listeners")
