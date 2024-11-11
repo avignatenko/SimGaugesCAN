@@ -1,4 +1,5 @@
 {
-    "channel": "/dev/tty.usbmodem1101",
-    "ttyBaudrate": "4000000"
+    "channel": "COM10",
+    "ttyBaudrate": "4000000",
+    "simAddr": "localhost:8086"
 }
