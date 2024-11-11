@@ -7,20 +7,17 @@ from ..can import Can
 
 logger = logging.getLogger(__name__)
 
+
 class GyroSuction(Device):
 
     CAN_ID = 29
 
-    def __init__(self, sim: Sim, can: Can):
-        self._sim = sim
-        self._can = can
-
     async def init(self):
         await self._sim.subscribe_dataref(
             "sim/cockpit2/gauges/indicators/suction_1_ratio",
+            self._on_suction_update,
             0.1,
             5,  # Hz
-            self._on_suction_update,
         )
 
     async def _on_suction_update(self, value):

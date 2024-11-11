@@ -5,24 +5,18 @@ from ..devices import Device
 from ..sim import Sim
 from ..can import Can
 
-from .gyrosuction import GyroSuction
-
 logger = logging.getLogger(__name__)
+
 
 class Airspeed(Device):
 
     CAN_ID = 16
 
-    def __init__(self, sim: Sim, can: Can):
-        self._sim = sim
-        self._can = can
-
     async def init(self):
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/airspeed_kts_pilot",
-            0.05,
-            10,  # Hz
             self._on_airspeed_update,
+            0.05,          
         )
 
     async def _on_airspeed_update(self, value):

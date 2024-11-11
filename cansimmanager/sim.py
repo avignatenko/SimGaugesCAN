@@ -80,7 +80,7 @@ class Sim:
         self._wsclient = await connect(f"ws://{uri}/api/v1")
 
     async def subscribe_dataref(
-        self, dataref: str, tolerance: float, freq: float, callback: Callable
+        self, dataref: str, callback: Callable, tolerance: float, freq: float = 10
     ) -> None:
 
         dataref_id = await self._get_dataref_id(dataref)
