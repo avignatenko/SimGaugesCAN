@@ -2,7 +2,6 @@ import asyncio
 import logging
 import sys
 import can
-import uvloop
 
 from . import common
 from .devices import Devices
@@ -18,6 +17,8 @@ async def can_handler(bus: can.Bus, sim, devices: Devices):
     loop = asyncio.get_running_loop()
     notifier = can.Notifier(bus, listeners=[reader], loop=loop)
 
+    logger.info("Starting CAN handler")
+
     while True:
         message = await reader.get_message()
         logger.debug("CAN message: %s", message.arbitration_id)
@@ -30,6 +31,7 @@ async def can_handler(bus: can.Bus, sim, devices: Devices):
 
 async def websockets_handler(bus, sim, devices):
 
+    logger.info("Starting WebSockets handler")
     while True:
         dataref = await sim.get_updated_dataref()
         for device in devices.get_from_dataref(dataref):
@@ -52,7 +54,7 @@ async def main() -> None:
     logging.info("Sim connection init")
     sim = Sim()
     try:
-        uri = "ws://localhost:8765"
+        uri = "localhost:8086"
         await sim.connect(uri)
     except OSError as e:
         logging.error("Sim error: %s", e)
@@ -60,12 +62,12 @@ async def main() -> None:
 
     logging.info("CAN bus init")
 
-    '''
+    """
     bus = can.interface.Bus("test", bustype="virtual")
     bus_test_sender = can.interface.Bus('test', bustype='virtual')
     bus_test_sender.send(common.make_message(29, 0, 0, 0, []))
-    '''
-    
+    """
+
     try:
         bus = can.interface.Bus(
             interface="slcan",
@@ -77,17 +79,19 @@ async def main() -> None:
         logging.error("CAN error: %s", e)
         bus.shutdown()
         exit(-1)
-    
+
+    # subsribe devices
+    datarefs = devices.get_datarefs()
+    await sim.subscribe_datarefs(datarefs)
 
     # run can receiver and websockets receiver async
     logging.info("Starting can and websockets listeners")
     async with asyncio.TaskGroup() as tg:
-        task1 = tg.create_task(can_handler(bus=bus, sim=sim, devices=devices))
+        # task1 = tg.create_task(can_handler(bus=bus, sim=sim, devices=devices))
         task2 = tg.create_task(websockets_handler(bus=bus, sim=sim, devices=devices))
 
     bus.shutdown()
 
 
 if __name__ == "__main__":
-    uvloop.run(main())
-    #asyncio.run(main())
+    asyncio.run(main())

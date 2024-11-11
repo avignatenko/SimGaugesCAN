@@ -25,3 +25,6 @@ class Devices:
 
     def get_from_dataref(self, dataref) -> list[Device]:
         return self._devices_by_dataref.get(dataref)
+
+    def get_datarefs(self) -> list[str]:
+        return self._devices_by_dataref.keys()
