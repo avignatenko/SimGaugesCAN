@@ -9,6 +9,8 @@ from .airspeed import Airspeed
 from .turnroll import TurnRoll
 from .attitude import Attitude
 from .altitude import Altitude
+from .vertspeed import VerticalSpeed
+from .heading import Heading
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +23,8 @@ def register(sim: Sim, can: Can):
     _devices.append(TurnRoll(sim, can))
     _devices.append(Attitude(sim, can))
     _devices.append(Altitude(sim, can))
+    _devices.append(VerticalSpeed(sim, can))
+    _devices.append(Heading(sim, can))
     
 async def init():
     for device in _devices:

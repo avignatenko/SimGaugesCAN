@@ -14,7 +14,8 @@ class Altitude(Device):
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/altitude_ft_pilot",
             self._on_altitude_update,
-            0.5
+            tolerance=0.25,
+            freq=5
         )
 
         self._bar_in_hg_dataref_id = await self._sim.get_dataref_id(
@@ -30,6 +31,6 @@ class Altitude(Device):
     async def _set_altitude(self, value: float):
         await self._can.send(self.CAN_ID, 0, common.make_payload_float(-value))
 
-    async def _on_pressure_knob_rotated(self, payload):
+    async def _on_pressure_knob_rotated(self, port, payload):
         value = common.payload_float(payload)
         await self._sim.send_dataref(self._bar_in_hg_dataref_id, value)

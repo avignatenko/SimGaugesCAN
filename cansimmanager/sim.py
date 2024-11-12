@@ -75,7 +75,6 @@ class Sim:
 
                 sent_value = dataref.value
                 await callback.callback(sent_value)
-
                 callback.last_update_time = time.time()
                 callback.last_value = sent_value
                 callback.update_scheduled = False
