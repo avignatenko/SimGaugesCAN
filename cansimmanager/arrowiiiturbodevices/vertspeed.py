@@ -15,6 +15,7 @@ class VerticalSpeed(Device):
     async def init(self):
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/vvi_fpm_pilot",
+            None,
             self._on_vertspeed_update,
             0.01,          
         )

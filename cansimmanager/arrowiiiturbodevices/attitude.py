@@ -15,12 +15,14 @@ class Attitude(Device):
     async def init(self):
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/attitude_indicator_0_roll",
+            None,
             self._on_roll_update,
             0.05,          
         )
 
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/attitude_indicator_0_pitch",
+            None,
             self._on_pitch_update,
             0.05,          
         )

@@ -15,6 +15,7 @@ class GyroSuction(Device):
     async def init(self):
         await self._sim.subscribe_dataref(
             "sim/cockpit2/gauges/indicators/suction_1_ratio",
+            None,
             self._on_suction_update,
             0.1,
             5,  # Hz

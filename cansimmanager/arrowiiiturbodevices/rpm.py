@@ -8,21 +8,22 @@ from ..can import Can
 logger = logging.getLogger(__name__)
 
 
-class Airspeed(Device):
+class RPM(Device):
 
-    CAN_ID = 16
+    CAN_ID = 21
 
     async def init(self):
         await self._sim.subscribe_dataref(
-            "simcoders/rep/cockpit2/gauges/indicators/airspeed_kts_pilot",
+            "simcoders/rep/cockpit2/gauges/indicators/engine_0_rpm",
             None,
-            self._on_airspeed_update,
-            0.05,
+            self._on_rpm_update,
+            5,
+            freq=5,
         )
 
-    async def _on_airspeed_update(self, value):
+    async def _on_rpm_update(self, value):
         logging.debug("udpate received!! %s", value)
-        await self._set_airpeed(value)
+        await self._set_rpm(value)
 
-    async def _set_airpeed(self, value: float):
+    async def _set_rpm(self, value: float):
         await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))

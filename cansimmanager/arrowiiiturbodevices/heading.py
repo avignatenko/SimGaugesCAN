@@ -31,6 +31,7 @@ class Heading(Device):
 
         await self._sim.subscribe_dataref(
             "sim/cockpit/gyros/psi_vac_ind_degm",
+            None,
             self._on_heading_update,
             tolerance=0.1,
             freq=5,
@@ -38,6 +39,7 @@ class Heading(Device):
 
         await self._sim.subscribe_dataref(
             "sim/cockpit/autopilot/heading_mag",
+            None,
             self._on_heading_ap_bug_update,
             tolerance=0.1,
             freq=5,
@@ -45,6 +47,7 @@ class Heading(Device):
 
         await self._sim.subscribe_dataref(
             "sim/cockpit/gyros/dg_drift_vac_deg",
+            None,
             self._on_dg_drift_update,
             tolerance=0.01,
             freq=5,

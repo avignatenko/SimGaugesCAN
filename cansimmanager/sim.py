@@ -50,6 +50,10 @@ class Sim:
             if not dataref:
                 continue
 
+            # fix for arrays with lenght of one
+            if isinstance(value, list) and len(value) == 1:
+                value = value[0]
+
             dataref.value = value
             for callback in dataref.update_callbacks:
 
@@ -99,14 +103,24 @@ class Sim:
         await self._wsclient.send(json.dumps(update_request))
 
     async def subscribe_dataref(
-        self, dataref: str, callback: Callable, tolerance: float, freq: float = 10
+        self,
+        dataref: str,
+        index,
+        callback: Callable,
+        tolerance: float,
+        freq: float = 10,
     ) -> None:
 
         dataref_id = await self.get_dataref_id(dataref)
+
+        dataref_subscription = {"id": dataref_id}
+        if index is not None:
+            dataref_subscription["index"] = index
+
         subscribe_request = {
             "req_id": 1,
             "type": "dataref_subscribe_values",
-            "params": {"datarefs": [{"id": dataref_id}]},
+            "params": {"datarefs": [dataref_subscription]},
         }
 
         await self._wsclient.send(json.dumps(subscribe_request))

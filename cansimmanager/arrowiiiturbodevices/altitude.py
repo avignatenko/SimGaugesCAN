@@ -13,6 +13,7 @@ class Altitude(Device):
     async def init(self):
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/altitude_ft_pilot",
+            None,
             self._on_altitude_update,
             tolerance=0.25,
             freq=5

@@ -16,11 +16,15 @@ class TurnRoll(Device):
 
     async def init(self):
         await self._sim.subscribe_dataref(
-            "sim/cockpit2/gauges/indicators/slip_deg", self._on_slip_deg_update, 0.01
+            "sim/cockpit2/gauges/indicators/slip_deg",
+            None,
+            self._on_slip_deg_update,
+            0.01,
         )
 
         await self._sim.subscribe_dataref(
             "sim/cockpit2/gauges/indicators/turn_rate_roll_deg_pilot",
+            None,
             self._on_turn_rate_update,
             0.1,
         )
