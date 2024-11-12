@@ -21,6 +21,7 @@ class Sim:
                 self.freq = freq
                 self.last_value = None
                 self.last_update_time = None
+                self.update_scheduled = False
 
         def __init__(self):
             self.value = None
@@ -50,23 +51,34 @@ class Sim:
                 continue
 
             dataref.value = value
-            cur_time = time.time()
             for callback in dataref.update_callbacks:
+
+                if callback.update_scheduled:
+                    continue
+
+                # changed enough?
                 if (
                     callback.last_value
-                    and abs(callback.last_value - value) < callback.tolerance
+                    and abs(callback.last_value - dataref.value) < callback.tolerance
                 ):
                     continue
 
-                if (
-                    callback.last_update_time
-                    and cur_time - callback.last_update_time < (1.0 / callback.freq)
-                ):
-                    continue
+                callback.update_scheduled = True
 
-                callback.last_update_time = cur_time
-                callback.last_value = value
-                task = asyncio.create_task(callback.callback(value))
+                # let's figure out when to update next time
+                if callback.last_update_time:
+                    time_to_next_update = (
+                        callback.last_update_time + (1.0 / callback.freq) - time.time()
+                    )
+                    if time_to_next_update > 0:
+                        await asyncio.sleep(time_to_next_update)
+
+                sent_value = dataref.value
+                await callback.callback(sent_value)
+
+                callback.last_update_time = time.time()
+                callback.last_value = sent_value
+                callback.update_scheduled = False
 
     async def connect(self, uri):
         self._httpsession = aiohttp.ClientSession(base_url=f"http://{uri}")
@@ -119,7 +131,9 @@ class Sim:
                     asyncio.create_task(self._process_dataref_update(data_json["data"]))
                 case "result":
                     if data_json["success"] == False:
-                            logger.error("WS error returned for request %s", data_json["req_id"])
+                        logger.error(
+                            "WS error returned for request %s", data_json["req_id"]
+                        )
 
     def __del__(self):
         if self._wsclient:
