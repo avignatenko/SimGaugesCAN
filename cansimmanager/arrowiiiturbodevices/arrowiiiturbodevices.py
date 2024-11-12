@@ -8,6 +8,7 @@ from .gyrosuction import GyroSuction
 from .airspeed import Airspeed
 from .turnroll import TurnRoll
 from .attitude import Attitude
+from .altitude import Altitude
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,8 @@ def register(sim: Sim, can: Can):
     _devices.append(Airspeed(sim, can))
     _devices.append(TurnRoll(sim, can))
     _devices.append(Attitude(sim, can))
-
+    _devices.append(Altitude(sim, can))
+    
 async def init():
     for device in _devices:
         await device.init()

@@ -28,6 +28,8 @@ def port_from_canid(canid: int) -> int:
 def payload_byte(data) -> int:
     return data[0]
 
+def payload_float(data) -> float:
+    return struct.unpack('<f', data)[0]
 
 def make_payload_float(num: float) -> list:
     return list(struct.pack("f", num))

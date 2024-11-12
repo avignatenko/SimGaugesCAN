@@ -31,13 +31,6 @@ class Sim:
         self._httpsession: aiohttp.ClientSession = None
         self._datarefsStorage: dict[int, self.DatarefData] = {}
 
-    async def _get_dataref_id(self, dataref: str) -> int:
-        async with self._httpsession.get(
-            f"/api/v1/datarefs?filter[name]={dataref}"
-        ) as response:
-            json = await response.json()
-            return json["data"][0]["id"]
-
     async def _get_updated_dataref(self) -> str:
         # for testing - never returning future
         # loop = asyncio.get_running_loop()
@@ -79,11 +72,26 @@ class Sim:
         self._httpsession = aiohttp.ClientSession(base_url=f"http://{uri}")
         self._wsclient = await connect(f"ws://{uri}/api/v1")
 
+    async def get_dataref_id(self, dataref: str) -> int:
+        async with self._httpsession.get(
+            f"/api/v1/datarefs?filter[name]={dataref}"
+        ) as response:
+            json = await response.json()
+            return json["data"][0]["id"]
+
+    async def send_dataref(self, dataref_id: int, dataref_value) -> None:
+        update_request = {
+            "req_id": 2,
+            "type": "dataref_set_values",
+            "params": {"datarefs": [{"id": dataref_id, "value": dataref_value}]},
+        }
+        await self._wsclient.send(json.dumps(update_request))
+
     async def subscribe_dataref(
         self, dataref: str, callback: Callable, tolerance: float, freq: float = 10
     ) -> None:
 
-        dataref_id = await self._get_dataref_id(dataref)
+        dataref_id = await self.get_dataref_id(dataref)
         subscribe_request = {
             "req_id": 1,
             "type": "dataref_subscribe_values",
@@ -109,6 +117,9 @@ class Sim:
             match data_json["type"]:
                 case "dataref_update_values":
                     asyncio.create_task(self._process_dataref_update(data_json["data"]))
+                case "result":
+                    if data_json["success"] == False:
+                            logger.error("WS error returned for request %s", data_json["req_id"])
 
     def __del__(self):
         if self._wsclient:
