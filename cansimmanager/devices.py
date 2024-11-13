@@ -37,7 +37,7 @@ class SingleValueIndicator(Device):
         self._port = port
 
     async def _on_value_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_value(value)
 
     async def _set_value(self, value: float):

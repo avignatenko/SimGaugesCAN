@@ -21,7 +21,7 @@ class VerticalSpeed(Device):
         )
 
     async def _on_vertspeed_update(self, value):
-        logging.debug("update received!! %s", value)
+        logger.debug("update received!! %s", value)
         await self._set_vertspeed(value)
 
     async def _set_vertspeed(self, value: float):

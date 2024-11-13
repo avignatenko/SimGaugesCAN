@@ -28,14 +28,14 @@ class Attitude(Device):
         )
 
     async def _on_roll_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_roll(value)
 
     async def _set_roll(self, value: float):
         await self._can.send(self.CAN_ID, 1, common.make_payload_float(value))
 
     async def _on_pitch_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_pitch(value)
 
     async def _set_pitch(self, value: float):

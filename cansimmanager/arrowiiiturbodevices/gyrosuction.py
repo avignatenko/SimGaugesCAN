@@ -22,7 +22,7 @@ class GyroSuction(Device):
         )
 
     async def _on_suction_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_suction(value)
 
     async def _set_suction(self, value: float):

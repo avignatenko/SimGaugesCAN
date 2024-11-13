@@ -56,20 +56,20 @@ class Heading(Device):
         await self._can.subscribe_message(self.CAN_ID, self._on_knobs_rotated)
 
     async def _on_dg_drift_update(self, value):
-        logging.debug("update received!! %s", value)
+        logger.debug("update received!! %s", value)
         if self._dg_drift_manual_knob_override_mode:
             return
         self._dg_drift_current = value
 
     async def _on_heading_update(self, value):
-        logging.debug("update received!! %s", value)
+        logger.debug("update received!! %s", value)
         await self._set_heading(value)
 
     async def _set_heading(self, value: float):
         await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
 
     async def _on_heading_ap_bug_update(self, value):
-        logging.debug("update received!! %s", value)
+        logger.debug("update received!! %s", value)
         if self._ap_bug_manual_knob_override_mode:
             return
         self._ap_bug_mag_current = value
@@ -96,7 +96,7 @@ class Heading(Device):
         await self._sim.send_dataref(
             self._dg_drift_dataref_id, self._dg_drift_current
         )
-        logging.debug("update sent!! %s", self._dg_drift_current)
+        logger.debug("update sent!! %s", self._dg_drift_current)
         self._dg_drift_restore_sim_mode_task = asyncio.create_task(
             self.restore_sim_mode_dg_drift_mag()
         )
@@ -112,7 +112,7 @@ class Heading(Device):
         await self._sim.send_dataref(
             self._ap_bug_mag_dataref_id, self._ap_bug_mag_current
         )
-        logging.debug("update sent!! %s", self._ap_bug_mag_current)
+        logger.debug("update sent!! %s", self._ap_bug_mag_current)
         self._ap_bug_restore_sim_mode_task = asyncio.create_task(
             self.restore_sim_mode_ap_bug_mag()
         )

@@ -30,14 +30,14 @@ class TurnRoll(Device):
         )
 
     async def _on_slip_deg_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_slip_deg(value)
 
     async def _set_slip_deg(self, value: float):
         await self._can.send(self.CAN_ID, 1, common.make_payload_float(-value * 3))
 
     async def _on_turn_rate_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_turn_rate(value)
 
     async def _set_turn_rate(self, value: float):

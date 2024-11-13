@@ -30,14 +30,14 @@ class MPR(Device):
         )
 
     async def _on_mpr_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_mpr(value)
 
     async def _set_mpr(self, value: float):
         await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
 
     async def _on_fuel_flow_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_fuel_flow(value)
 
     async def _set_fuel_flow(self, value: float):

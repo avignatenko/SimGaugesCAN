@@ -26,7 +26,7 @@ class Altitude(Device):
         await self._can.subscribe_message(self.CAN_ID, self._on_pressure_knob_rotated)
 
     async def _on_altitude_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_altitude(value)
 
     async def _set_altitude(self, value: float):

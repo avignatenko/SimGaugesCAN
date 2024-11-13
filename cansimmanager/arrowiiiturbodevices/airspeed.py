@@ -20,7 +20,7 @@ class Airspeed(Device):
         )
 
     async def _on_airspeed_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_airpeed(value)
 
     async def _set_airpeed(self, value: float):

@@ -22,7 +22,7 @@ class RPM(Device):
         )
 
     async def _on_rpm_update(self, value):
-        logging.debug("udpate received!! %s", value)
+        logger.debug("udpate received!! %s", value)
         await self._set_rpm(value)
 
     async def _set_rpm(self, value: float):
