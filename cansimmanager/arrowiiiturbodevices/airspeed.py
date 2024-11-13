@@ -7,7 +7,6 @@ from ..can import Can
 
 logger = logging.getLogger(__name__)
 
-
 class Airspeed(Device):
 
     CAN_ID = 16

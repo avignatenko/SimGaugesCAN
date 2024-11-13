@@ -32,18 +32,6 @@ class Sim:
         self._httpsession: aiohttp.ClientSession = None
         self._datarefsStorage: dict[int, self.DatarefData] = {}
 
-    async def _get_updated_dataref(self) -> str:
-        # for testing - never returning future
-        # loop = asyncio.get_running_loop()
-        # future = loop.create_future()
-        # return await future
-        data = await self._wsclient.recv()
-        json = json.loads(data)
-        # switch by message type
-        if json["type"] == "dataref_update_values":
-            dataref_id = 1
-        return data
-
     async def _process_dataref_update(self, data):
         for dataref_id_str, value in data.items():
             dataref = self._datarefsStorage.get(int(dataref_id_str))

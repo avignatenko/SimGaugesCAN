@@ -5,7 +5,7 @@ from ..devices import Device
 
 logger = logging.getLogger(__name__)
 
-
+    
 class Altitude(Device):
 
     CAN_ID = 17

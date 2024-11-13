@@ -1,4 +1,5 @@
 import logging
+import asyncio
 
 from ..devices import Device
 from ..sim import Sim
@@ -13,8 +14,10 @@ from .vertspeed import VerticalSpeed
 from .heading import Heading
 from .rpm import RPM
 from .mpr import MPR
+from .indicators import IndicatorsPanel
 
 logger = logging.getLogger(__name__)
+
 
 def register(sim: Sim, can: Can):
     global _devices
@@ -28,6 +31,7 @@ def register(sim: Sim, can: Can):
         Altitude(sim, can),
         VerticalSpeed(sim, can),
         Heading(sim, can),
+        IndicatorsPanel(sim, can),
         # low-left panel
         RPM(sim, can),
         MPR(sim, can),
@@ -35,5 +39,4 @@ def register(sim: Sim, can: Can):
 
 
 async def init():
-    for device in _devices:
-        await device.init()
+    asyncio.gather(*map(lambda obj: obj.init(), _devices))
