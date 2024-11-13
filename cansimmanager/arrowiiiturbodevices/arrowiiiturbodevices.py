@@ -14,7 +14,8 @@ from .vertspeed import VerticalSpeed
 from .heading import Heading
 from .rpm import RPM
 from .mpr import MPR
-from .indicators import IndicatorsPanel
+from .indicators1 import IndicatorsPanel1
+from .indicators2 import IndicatorsPanel2
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,8 @@ def register(sim: Sim, can: Can):
         Altitude(sim, can),
         VerticalSpeed(sim, can),
         Heading(sim, can),
-        IndicatorsPanel(sim, can),
+        IndicatorsPanel1(sim, can),
+        IndicatorsPanel2(sim, can),
         # low-left panel
         RPM(sim, can),
         MPR(sim, can),
