@@ -135,7 +135,7 @@ class DirIndicatorTests(BaseGaugeTest):
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(30))
         time.sleep(1)
         self.send_command_2(port=0, payload=cansimmanager.make_payload_float(0))
-  
+
     def test_hor(self):
         self.send_command_2(port=1, payload=cansimmanager.make_payload_float(-30))
         time.sleep(1)
@@ -270,6 +270,28 @@ class Indicators2Tests(BaseGaugeTest):
         self.send_command_2(port=1, payload=cansimmanager.make_payload_float(14))
         time.sleep(2)
         self.send_command_2(port=1, payload=cansimmanager.make_payload_float(0))
+
+
+class STec30Test(BaseGaugeTest):
+
+    gauge_id = 32
+
+    def test_basic(self):
+        for i in range(4):
+            self.send_command_2(port=i, payload=cansimmanager.make_payload_byte(1))
+            time.sleep(1)
+            self.send_command_2(port=i, payload=cansimmanager.make_payload_byte(0))
+
+    def test_button_manual(self):
+        for msg in bus:
+            if (
+                cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id
+                and cansimmanager.port_from_canid(msg.arbitration_id) == 0
+                and msg.dlc == 1
+                and cansimmanager.payload_byte(msg.data) == 1
+            ):
+                print(msg.data)
+                break
 
 
 if __name__ == "__main__":

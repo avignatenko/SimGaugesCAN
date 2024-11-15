@@ -1,7 +1,6 @@
 import logging
 import asyncio
 
-from ..devices import Device
 from ..sim import Sim
 from ..can import Can
 
@@ -16,6 +15,7 @@ from .rpm import RPM
 from .mpr import MPR
 from .indicators1 import IndicatorsPanel1
 from .indicators2 import IndicatorsPanel2
+from .stec30alt import STec30Alt
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +34,7 @@ def register(sim: Sim, can: Can):
         Heading(sim, can),
         IndicatorsPanel1(sim, can),
         IndicatorsPanel2(sim, can),
+        STec30Alt(sim, can),
         # low-left panel
         RPM(sim, can),
         MPR(sim, can),
