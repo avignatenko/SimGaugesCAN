@@ -42,7 +42,10 @@ class Sim:
             if isinstance(value, list) and len(value) == 1:
                 value = value[0]
 
+            # change data for value
             dataref.value = value
+
+            # check if we need update someone
             for callback in dataref.update_callbacks:
 
                 if callback.update_scheduled:
@@ -65,10 +68,9 @@ class Sim:
                     if time_to_next_update > 0:
                         await asyncio.sleep(time_to_next_update)
 
-                sent_value = dataref.value
-                await callback.callback(sent_value)
                 callback.last_update_time = time.time()
-                callback.last_value = sent_value
+                callback.last_value = dataref.value
+                await callback.callback(dataref.value)
                 callback.update_scheduled = False
 
     async def connect(self, uri):
