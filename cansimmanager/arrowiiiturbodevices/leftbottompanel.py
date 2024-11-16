@@ -150,10 +150,11 @@ class LeftBottomPanel(Device):
 
             case 5:  # ignition
                 data = common.payload_byte(payload)
+                if self._task_cranking is not None:
+                    self._task_cranking.cancel()
+                    self._task_cranking = None
+                    
                 if data != 4:
-                    if self._task_cranking is not None:
-                        self._task_cranking.cancel()
-
                     await self._sim.send_dataref(self._ignition_key_dataref_id, 0, data)
                 else:
                     self._task_cranking = asyncio.create_task(self.keep_cranking())
