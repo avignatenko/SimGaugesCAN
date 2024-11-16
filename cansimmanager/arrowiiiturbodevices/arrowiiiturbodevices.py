@@ -16,6 +16,7 @@ from .mpr import MPR
 from .indicators1 import IndicatorsPanel1
 from .indicators2 import IndicatorsPanel2
 from .stec30alt import STec30Alt
+from .leftbottompanel import LeftBottomPanel
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ def register(sim: Sim, can: Can):
         # low-left panel
         RPM(sim, can),
         MPR(sim, can),
+        LeftBottomPanel(sim, can),
     ]
 
 

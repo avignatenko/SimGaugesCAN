@@ -34,4 +34,4 @@ class Altitude(Device):
 
     async def _on_pressure_knob_rotated(self, port, payload):
         value = common.payload_float(payload)
-        await self._sim.send_dataref(self._bar_in_hg_dataref_id, value)
+        await self._sim.send_dataref(self._bar_in_hg_dataref_id, None, value)

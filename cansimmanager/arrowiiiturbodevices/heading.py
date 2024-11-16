@@ -94,7 +94,7 @@ class Heading(Device):
         self._dg_drift_current += value
 
         await self._sim.send_dataref(
-            self._dg_drift_dataref_id, self._dg_drift_current
+            self._dg_drift_dataref_id, None, self._dg_drift_current
         )
         logger.debug("update sent!! %s", self._dg_drift_current)
         self._dg_drift_restore_sim_mode_task = asyncio.create_task(
@@ -110,7 +110,7 @@ class Heading(Device):
         self._ap_bug_mag_current += value
         await self._set_heading_ap_bug(self._ap_bug_mag_current)
         await self._sim.send_dataref(
-            self._ap_bug_mag_dataref_id, self._ap_bug_mag_current
+            self._ap_bug_mag_dataref_id, None, self._ap_bug_mag_current
         )
         logger.debug("update sent!! %s", self._ap_bug_mag_current)
         self._ap_bug_restore_sim_mode_task = asyncio.create_task(

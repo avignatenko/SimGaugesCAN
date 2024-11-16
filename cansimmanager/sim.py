@@ -82,11 +82,16 @@ class Sim:
             json = await response.json()
             return json["data"][0]["id"]
 
-    async def send_dataref(self, dataref_id: int, dataref_value) -> None:
+    async def send_dataref(self, dataref_id: int, index, dataref_value) -> None:
+
+        dataref_value = {"id": dataref_id, "value": dataref_value}
+        if index is not None:
+            dataref_value["index"] = index
+
         update_request = {
             "req_id": 2,
             "type": "dataref_set_values",
-            "params": {"datarefs": [{"id": dataref_id, "value": dataref_value}]},
+            "params": {"datarefs": [dataref_value]},
         }
         await self._wsclient.send(json.dumps(update_request))
 
