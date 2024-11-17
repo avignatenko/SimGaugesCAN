@@ -74,8 +74,15 @@ class Sim:
                 callback.update_scheduled = False
 
     async def connect(self, uri):
-        self._httpsession = aiohttp.ClientSession(base_url=f"http://{uri}")
-        self._wsclient = await connect(f"ws://{uri}/api/v1")
+        try:
+            self._httpsession = aiohttp.ClientSession(base_url=f"http://{uri}")
+            self._wsclient = await connect(f"ws://{uri}/api/v1")
+        except (OSError, TimeoutError):
+            if self._httpsession is not None:
+                await self._httpsession.close()
+            if self._wsclient is not None:
+                await self._wsclient.close()
+            raise
 
     async def get_dataref_id(self, dataref: str) -> int:
         async with self._httpsession.get(

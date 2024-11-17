@@ -15,12 +15,6 @@ class Can:
         self._callbacks = {}
 
     async def connect(self, channel, tty_baudrate):
-        """
-        bus = can.interface.Bus("test", bustype="virtual")
-        bus_test_sender = can.interface.Bus('test', bustype='virtual')
-        bus_test_sender.send(common.make_message(29, 0, 0, 0, []))
-        """
-
         self._bus = can.interface.Bus(
             interface="slcan",
             channel=channel,
@@ -59,6 +53,10 @@ class Can:
                 continue
 
             for callback in callbacks:
-                asyncio.create_task(callback(common.port_from_canid(message.arbitration_id), message.data))
+                asyncio.create_task(
+                    callback(
+                        common.port_from_canid(message.arbitration_id), message.data
+                    )
+                )
 
         notifier.stop()

@@ -21,19 +21,22 @@ async def main() -> None:
     logger.info("Making main objects")
 
     logger.info("Sim connection init")
-    try:
-        sim = Sim()
-        uri = config["simAddr"]
-        await sim.connect(uri)
-    except OSError as e:
-        logger.error("Sim error: %s", e)
-        exit(-1)
+    sim = Sim()
+    while True:
+        try:
+            uri = config["simAddr"]
+            await sim.connect(uri)
+            break
+        except (OSError, TimeoutError) as e:
+            logger.error("Sim connection error: %s, reconnecting", e)
+            continue
 
     logger.info("CAN bus init")
 
     try:
         can = Can()
         await can.connect(config["channel"], config["ttyBaudrate"])
+        can.
     except Exception as e:
         logger.error("CAN error: %s", e)
         exit(-1)

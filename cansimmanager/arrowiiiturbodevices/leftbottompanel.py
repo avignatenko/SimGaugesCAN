@@ -3,7 +3,7 @@ import asyncio
 
 from .. import common
 from ..devices import Device
-from busvolts import BusVolts
+from .busvolts import BusVolts
 
 logger = logging.getLogger(__name__)
 
