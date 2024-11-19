@@ -5,6 +5,7 @@ from .. import cansimlib
 from .airspeed import Airspeed
 from .altitude import Altitude
 from .attitude import Attitude
+from .buttonspanel import ButtonsPanel
 from .fuelselector import FuelSelector
 from .gyrosuction import GyroSuction
 from .heading import Heading
@@ -41,6 +42,8 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         LeftBottomPanel(sim, can),
         # bottom
         FuelSelector(sim, can),
+        # right
+        ButtonsPanel(sim, can),
     ]
 
 

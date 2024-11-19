@@ -13,6 +13,38 @@ class Device:
         self._can = can
 
 
+class PhysicalSwitch(Device):
+
+    def __init__(
+        self,
+        sim: xplaneclient.XPlaneClient,
+        can: canclient.CANClient,
+        can_id: int,
+        port: int,
+        dataref_str: str,
+        idx,
+        payload_to_dataref: Callable = lambda dataref: dataref,
+    ):
+        super().__init__(sim, can)
+        self._port = port
+        self._idx = idx
+        self._can_id = can_id
+        self._dataref_str = dataref_str
+        self._payload_to_dataref = payload_to_dataref
+
+    async def init(self):
+        self._dataref_id = await self._sim.get_dataref_id(self._dataref_str)
+        await self._can.subscribe_message(self._can_id, self._on_can_message)
+
+    async def _on_can_message(self, port, payload):
+        if port != self._port:
+            return
+
+        dataref_value = self._payload_to_dataref(payload)
+
+        await self._sim.send_dataref(self._dataref_id, self._idx, dataref_value)
+
+
 class SingleValueIndicator(Device):
 
     async def _init_internal(

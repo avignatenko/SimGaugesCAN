@@ -53,7 +53,6 @@ async def main_loop() -> None:
     logger.info("Registering devices")
     arrowiiiturbodevices.register(sim, can)
 
-    arrowiiiturbodevices
     logger.info("Devices init")
     await arrowiiiturbodevices.init()
 
