@@ -1,5 +1,5 @@
-import logging
 import asyncio
+import logging
 
 from .. import common
 from ..devices import Device

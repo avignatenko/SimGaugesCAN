@@ -1,9 +1,9 @@
 import logging
 
 from .. import common
+from ..can import Can
 from ..devices import Device
 from ..sim import Sim
-from ..can import Can
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class VerticalSpeed(Device):
             "simcoders/rep/cockpit2/gauges/indicators/vvi_fpm_pilot",
             None,
             self._on_vertspeed_update,
-            0.01,          
+            0.01,
         )
 
     async def _on_vertspeed_update(self, value):

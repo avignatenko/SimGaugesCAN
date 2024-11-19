@@ -1,5 +1,6 @@
 import asyncio
 
+
 class BusVolts:
 
     def __init__(self, sim):
@@ -31,4 +32,3 @@ class BusVolts:
 
     def register_ok_status_change(self, callback):
         self._callbacks.append(callback)
-

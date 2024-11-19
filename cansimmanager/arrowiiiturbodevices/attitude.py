@@ -1,9 +1,9 @@
 import logging
 
 from .. import common
+from ..can import Can
 from ..devices import Device
 from ..sim import Sim
-from ..can import Can
 
 logger = logging.getLogger(__name__)
 
@@ -17,14 +17,14 @@ class Attitude(Device):
             "simcoders/rep/cockpit2/gauges/indicators/attitude_indicator_0_roll",
             None,
             self._on_roll_update,
-            0.05,          
+            0.05,
         )
 
         await self._sim.subscribe_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/attitude_indicator_0_pitch",
             None,
             self._on_pitch_update,
-            0.05,          
+            0.05,
         )
 
     async def _on_roll_update(self, value):

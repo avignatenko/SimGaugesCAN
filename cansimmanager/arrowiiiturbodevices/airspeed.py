@@ -1,11 +1,12 @@
 import logging
 
 from .. import common
+from ..can import Can
 from ..devices import Device
 from ..sim import Sim
-from ..can import Can
 
 logger = logging.getLogger(__name__)
+
 
 class Airspeed(Device):
 

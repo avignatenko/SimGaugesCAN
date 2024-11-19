@@ -5,7 +5,7 @@ from ..devices import Device
 
 logger = logging.getLogger(__name__)
 
-    
+
 class Altitude(Device):
 
     CAN_ID = 17
@@ -16,7 +16,7 @@ class Altitude(Device):
             None,
             self._on_altitude_update,
             tolerance=0.25,
-            freq=5
+            freq=5,
         )
 
         self._bar_in_hg_dataref_id = await self._sim.get_dataref_id(

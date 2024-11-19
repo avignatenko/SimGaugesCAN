@@ -3,10 +3,9 @@ import logging
 import sys
 
 from . import common
-from .sim import Sim
-from .can import Can
-
 from .arrowiiiturbodevices import arrowiiiturbodevices
+from .can import Can
+from .sim import Sim
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +56,10 @@ async def main_loop() -> None:
         task1 = tg.create_task(can.run())
         task2 = tg.create_task(sim.run())
 
+
 def main():
     asyncio.run(main_loop())
+
 
 if __name__ == "__main__":
     main()

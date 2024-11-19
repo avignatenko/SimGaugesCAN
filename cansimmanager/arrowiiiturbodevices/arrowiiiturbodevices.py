@@ -1,23 +1,22 @@
-import logging
 import asyncio
+import logging
 
-from ..sim import Sim
 from ..can import Can
-
-from .gyrosuction import GyroSuction
+from ..sim import Sim
 from .airspeed import Airspeed
-from .turnroll import TurnRoll
-from .attitude import Attitude
 from .altitude import Altitude
-from .vertspeed import VerticalSpeed
+from .attitude import Attitude
+from .fuelselector import FuelSelector
+from .gyrosuction import GyroSuction
 from .heading import Heading
-from .rpm import RPM
-from .mpr import MPR
 from .indicators1 import IndicatorsPanel1
 from .indicators2 import IndicatorsPanel2
-from .stec30alt import STec30Alt
 from .leftbottompanel import LeftBottomPanel
-from .fuelselector import FuelSelector
+from .mpr import MPR
+from .rpm import RPM
+from .stec30alt import STec30Alt
+from .turnroll import TurnRoll
+from .vertspeed import VerticalSpeed
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,7 @@ def register(sim: Sim, can: Can):
         MPR(sim, can),
         LeftBottomPanel(sim, can),
         # bottom
-        FuelSelector(sim, can)
+        FuelSelector(sim, can),
     ]
 
 

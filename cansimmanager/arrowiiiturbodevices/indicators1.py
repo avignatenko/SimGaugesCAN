@@ -1,10 +1,9 @@
-import logging
 import asyncio
+import logging
 
-from ..devices import SingleValueIndicator, Device
-from ..sim import Sim
 from ..can import Can
-
+from ..devices import Device, SingleValueIndicator
+from ..sim import Sim
 
 logger = logging.getLogger(__name__)
 

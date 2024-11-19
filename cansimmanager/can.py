@@ -1,7 +1,8 @@
-import can
-import logging
 import asyncio
+import logging
 from typing import Callable
+
+import can
 
 from . import common
 

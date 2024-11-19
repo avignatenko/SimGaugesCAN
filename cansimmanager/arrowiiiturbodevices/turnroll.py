@@ -1,10 +1,9 @@
 import logging
 
 from .. import common
+from ..can import Can
 from ..devices import Device
 from ..sim import Sim
-from ..can import Can
-
 from .gyrosuction import GyroSuction
 
 logger = logging.getLogger(__name__)

@@ -1,12 +1,11 @@
 import asyncio
-import logging
-import aiohttp
 import json
+import logging
 import time
-
 from typing import Callable
 
-from websockets.asyncio.client import connect, ClientConnection
+import aiohttp
+from websockets.asyncio.client import ClientConnection, connect
 
 logger = logging.getLogger(__name__)
 

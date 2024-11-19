@@ -1,10 +1,9 @@
 import logging
 from typing import Callable
 
-from .sim import Sim
-from .can import Can
 from . import common
-
+from .can import Can
+from .sim import Sim
 
 logger = logging.getLogger(__name__)
 
