@@ -47,8 +47,10 @@ class PhysicalSwitch(Device):
 
 class SingleValueIndicator(Device):
 
-    async def _init_internal(
+    def __init__(
         self,
+        sim: xplaneclient.XPlaneClient,
+        can: canclient.CANClient,
         can_id: int,
         port: int,
         dataref_str: str,
@@ -57,13 +59,24 @@ class SingleValueIndicator(Device):
         freq: float = 5,
         dataref_to_value: Callable = lambda dataref: dataref,
     ):
-        await self._sim.subscribe_dataref(
-            dataref_str, idx, self._on_value_update, tolerance, freq
-        )
+        super().__init__(sim, can)
 
         self._dataref_to_value = dataref_to_value
         self._can_id = can_id
         self._port = port
+        self._dataref_str = dataref_str
+        self._idx = idx
+        self._tolerance = tolerance
+        self._freq = freq
+
+    async def init(self):
+        await self._sim.subscribe_dataref(
+            self._dataref_str,
+            self._idx,
+            self._on_value_update,
+            self._tolerance,
+            self._freq,
+        )
 
     async def _on_value_update(self, value):
         logger.debug("udpate received!! %s", value)

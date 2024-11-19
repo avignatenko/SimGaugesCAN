@@ -7,8 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 class FuelQuantity0(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=25,
             port=2,
             dataref_str="simcoders/rep/indicators/fuel/fuel_quantity_ratio_0",
@@ -19,8 +21,10 @@ class FuelQuantity0(cansimlib.SingleValueIndicator):
 
 
 class FuelQuantity1(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=25,
             port=0,
             dataref_str="simcoders/rep/indicators/fuel/fuel_quantity_ratio_1",
@@ -31,8 +35,10 @@ class FuelQuantity1(cansimlib.SingleValueIndicator):
 
 
 class FuelPresss(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=25,
             port=1,
             dataref_str="simcoders/rep/cockpit2/gauges/indicators/fuel_press_psi_0",

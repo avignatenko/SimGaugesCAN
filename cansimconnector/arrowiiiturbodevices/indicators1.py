@@ -7,8 +7,11 @@ logger = logging.getLogger(__name__)
 
 
 class GeneratorAmps(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=27,
             port=0,
             dataref_str="sim/cockpit2/electrical/generator_amps",
@@ -18,8 +21,10 @@ class GeneratorAmps(cansimlib.SingleValueIndicator):
 
 
 class OilTemp(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=27,
             port=1,
             dataref_str="simcoders/rep/engine/oil/temp_f_0",
@@ -29,8 +34,10 @@ class OilTemp(cansimlib.SingleValueIndicator):
 
 
 class OilPressure(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=27,
             port=2,
             dataref_str="simcoders/rep/engine/oil/press_psi_0",
@@ -40,8 +47,10 @@ class OilPressure(cansimlib.SingleValueIndicator):
 
 
 class OutsideAir(cansimlib.SingleValueIndicator):
-    async def init(self):
-        await self._init_internal(
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
+        super().__init__(
+            sim,
+            can,
             can_id=27,
             port=3,
             dataref_str="sim/cockpit2/temperature/outside_air_temp_degc",
