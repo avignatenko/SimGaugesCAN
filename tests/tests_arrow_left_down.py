@@ -3,10 +3,13 @@
 # 115200 BIT / second = 0.1152 Mbit / second
 # Standard values above 115200, such as: 230400, 460800, 500000, 576000, 921600, 1000000, 1152000, 1500000, 2000000, 2500000, 3000000, 3500000, 4000000 also work on many platforms and devices.
 
-import can
 import time
 import unittest
+
+import can
+
 import cansimmanager
+
 
 def setUpModule():
     global bus
@@ -22,11 +25,13 @@ def setUpModule():
 def tearDownModule():
     bus.shutdown()
 
+
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
         cansimmanager.send_command(
             bus, id_src=1, id_dst=self.gauge_id, priority=0, port=port, payload=payload
         )
+
 
 class ManPressTest(BaseGaugeTest):
 
