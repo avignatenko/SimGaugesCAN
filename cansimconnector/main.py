@@ -44,10 +44,16 @@ async def main_loop() -> None:
     config = cansimlib.read_config()
 
     # setup main objects
-    logger.info("Making main objects")
+    logger.info("Connecting to services")
 
-    sim = await connect_sim(config)
-    can = await connect_can(config)
+    async with asyncio.TaskGroup() as tg:
+        task_sim = tg.create_task(connect_sim(config))
+        task_can = tg.create_task(connect_can(config))
+
+    sim = task_sim.result()
+    can = task_can.result()
+
+    logger.info("Connected to services")
 
     # subsribe devices
     logger.info("Registering devices")
