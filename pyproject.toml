@@ -22,7 +22,7 @@ dependencies = ["aiohttp", "pyserial", "python-can", "websockets"]
 # referred to as "extras". For a more extensive definition see:
 # https://packaging.python.org/en/latest/specifications/dependency-specifiers/#extras
 [project.optional-dependencies]
-dev = ["check-manifest"]
+dev = ["pyinstaller"]
 test = ["coverage"]
 
 # The following would provide a command line executable called `sample`
