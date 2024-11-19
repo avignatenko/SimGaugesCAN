@@ -5,10 +5,12 @@ import unittest
 
 import can
 
+import cansimconnector.cansimlib as cs
+
 
 def setUpModule():
     global bus
-    config = cansimmanager.read_config()
+    config = cs.read_config()
     bus = can.interface.Bus(
         interface="slcan",
         channel=config["channel"],
@@ -23,7 +25,7 @@ def tearDownModule():
 
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
-        cansimmanager.send_command(
+        cs.send_command(
             bus,
             id_src=1,
             id_dst=self.gauge_id,
@@ -40,7 +42,7 @@ class FuelSelectorTest(BaseGaugeTest):
     def test_knob_manual(self):
 
         for msg in bus:
-            if cansimmanager.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
+            if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
                 print(msg.data)
                 break
 

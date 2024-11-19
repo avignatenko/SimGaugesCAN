@@ -1,12 +1,11 @@
 import logging
 
-from .. import common
-from ..devices import Device
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class Altitude(Device):
+class Altitude(cansimlib.Device):
 
     CAN_ID = 17
 
@@ -30,8 +29,8 @@ class Altitude(Device):
         await self._set_altitude(value)
 
     async def _set_altitude(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(-value))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(-value))
 
     async def _on_pressure_knob_rotated(self, port, payload):
-        value = common.payload_float(payload)
+        value = cansimlib.payload_float(payload)
         await self._sim.send_dataref(self._bar_in_hg_dataref_id, None, value)

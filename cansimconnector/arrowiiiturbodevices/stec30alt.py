@@ -1,12 +1,11 @@
 import logging
 
-from .. import common
-from ..devices import Device
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class STec30Alt(Device):
+class STec30Alt(cansimlib.Device):
 
     CAN_ID = 32
 
@@ -17,5 +16,5 @@ class STec30Alt(Device):
     async def _on_button_pressed(self, port, payload):
         # test actions
         self._on = not self._on
-        await self._can.send(self.CAN_ID, 0, common.make_payload_byte(int(self._on)))
-        await self._can.send(self.CAN_ID, 1, common.make_payload_byte(int(self._on)))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_byte(int(self._on)))
+        await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_byte(int(self._on)))

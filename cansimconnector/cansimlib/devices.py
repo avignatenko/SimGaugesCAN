@@ -1,16 +1,14 @@
 import logging
 from typing import Callable
 
-from . import common
-from .can import Can
-from .sim import Sim
+from . import canclient, common, xplaneclient
 
 logger = logging.getLogger(__name__)
 
 
 class Device:
 
-    def __init__(self, sim: Sim, can: Can):
+    def __init__(self, sim: xplaneclient.XPlaneClient, can: canclient.CANClient):
         self._sim = sim
         self._can = can
 

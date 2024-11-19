@@ -9,7 +9,7 @@ from . import common
 logger = logging.getLogger(__name__)
 
 
-class Can:
+class CANClient:
 
     def __init__(self):
         self._bus: can.interface.Bus = None

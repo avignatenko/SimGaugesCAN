@@ -2,10 +2,7 @@ import asyncio
 import logging
 import sys
 
-from . import common
-from .arrowiiiturbodevices import arrowiiiturbodevices
-from .can import Can
-from .sim import Sim
+from . import arrowiiiturbodevices, cansimlib
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +11,13 @@ async def main_loop() -> None:
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
     logger.info("Reading config")
-    config = common.read_config()
+    config = cansimlib.read_config()
 
     # setup main objects
     logger.info("Making main objects")
 
     logger.info("Sim connection init")
-    sim = Sim()
+    sim = cansimlib.XPlaneClient()
     while True:
         try:
             uri = config["simAddr"]
@@ -32,7 +29,7 @@ async def main_loop() -> None:
             continue
 
     logger.info("CAN bus init")
-    can = Can()
+    can = cansimlib.CANClient()
     while True:
         try:
             await can.connect(config["channel"], config["ttyBaudrate"])
@@ -47,6 +44,7 @@ async def main_loop() -> None:
     logger.info("Registering devices")
     arrowiiiturbodevices.register(sim, can)
 
+    arrowiiiturbodevices
     logger.info("Devices init")
     await arrowiiiturbodevices.init()
 

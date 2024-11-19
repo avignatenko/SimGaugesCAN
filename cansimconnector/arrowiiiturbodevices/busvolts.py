@@ -1,10 +1,12 @@
 import asyncio
 
+from .. import cansimlib
+
 
 class BusVolts:
 
     def __init__(self, sim):
-        self._sim = sim
+        self._sim: cansimlib.XPlaneClient = sim
         self._volts = 0
         self._volts_ok = False
         self._callbacks = []

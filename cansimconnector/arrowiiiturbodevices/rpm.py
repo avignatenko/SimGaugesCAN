@@ -1,14 +1,11 @@
 import logging
 
-from .. import common
-from ..can import Can
-from ..devices import Device
-from ..sim import Sim
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class RPM(Device):
+class RPM(cansimlib.Device):
 
     CAN_ID = 21
 
@@ -26,4 +23,4 @@ class RPM(Device):
         await self._set_rpm(value)
 
     async def _set_rpm(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))

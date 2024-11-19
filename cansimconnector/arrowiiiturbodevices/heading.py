@@ -1,13 +1,12 @@
 import asyncio
 import logging
 
-from .. import common
-from ..devices import Device
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class Heading(Device):
+class Heading(cansimlib.Device):
 
     CAN_ID = 20
 
@@ -66,7 +65,7 @@ class Heading(Device):
         await self._set_heading(value)
 
     async def _set_heading(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))
 
     async def _on_heading_ap_bug_update(self, value):
         logger.debug("update received!! %s", value)
@@ -76,10 +75,10 @@ class Heading(Device):
         await self._set_heading_ap_bug(value)
 
     async def _set_heading_ap_bug(self, value: float):
-        await self._can.send(self.CAN_ID, 1, common.make_payload_float(value))
+        await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_float(value))
 
     async def _on_knobs_rotated(self, port, payload):
-        value = common.payload_float(payload)
+        value = cansimlib.payload_float(payload)
         if port == 1:
             await self.on_ap_heading_knob_rotated(value)
         if port == 0:

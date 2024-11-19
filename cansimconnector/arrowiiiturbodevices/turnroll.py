@@ -1,15 +1,11 @@
 import logging
 
-from .. import common
-from ..can import Can
-from ..devices import Device
-from ..sim import Sim
-from .gyrosuction import GyroSuction
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class TurnRoll(Device):
+class TurnRoll(cansimlib.Device):
 
     CAN_ID = 19
 
@@ -33,11 +29,11 @@ class TurnRoll(Device):
         await self._set_slip_deg(value)
 
     async def _set_slip_deg(self, value: float):
-        await self._can.send(self.CAN_ID, 1, common.make_payload_float(-value * 3))
+        await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_float(-value * 3))
 
     async def _on_turn_rate_update(self, value):
         logger.debug("udpate received!! %s", value)
         await self._set_turn_rate(value)
 
     async def _set_turn_rate(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))

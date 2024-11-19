@@ -1,3 +1,4 @@
 # a bootstrap for pyinstaller
-from cansimmanager.main import main
+from cansimconnector.main import main
+
 main()

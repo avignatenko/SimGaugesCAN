@@ -1,14 +1,11 @@
 import logging
 
-from .. import common
-from ..can import Can
-from ..devices import Device
-from ..sim import Sim
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class VerticalSpeed(Device):
+class VerticalSpeed(cansimlib.Device):
 
     CAN_ID = 18
 
@@ -25,4 +22,4 @@ class VerticalSpeed(Device):
         await self._set_vertspeed(value)
 
     async def _set_vertspeed(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(value / 100))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value / 100))

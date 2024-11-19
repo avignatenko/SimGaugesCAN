@@ -1,14 +1,12 @@
 import asyncio
 import logging
 
-from ..can import Can
-from ..devices import Device, SingleValueIndicator
-from ..sim import Sim
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class FuelQuantity0(SingleValueIndicator):
+class FuelQuantity0(cansimlib.SingleValueIndicator):
     async def init(self):
         await self._init_internal(
             can_id=25,
@@ -20,7 +18,7 @@ class FuelQuantity0(SingleValueIndicator):
         )
 
 
-class FuelQuantity1(SingleValueIndicator):
+class FuelQuantity1(cansimlib.SingleValueIndicator):
     async def init(self):
         await self._init_internal(
             can_id=25,
@@ -32,7 +30,7 @@ class FuelQuantity1(SingleValueIndicator):
         )
 
 
-class FuelPresss(SingleValueIndicator):
+class FuelPresss(cansimlib.SingleValueIndicator):
     async def init(self):
         await self._init_internal(
             can_id=25,
@@ -43,9 +41,9 @@ class FuelPresss(SingleValueIndicator):
         )
 
 
-class IndicatorsPanel2(Device):
+class IndicatorsPanel2(cansimlib.Device):
 
-    def __init__(self, sim: Sim, can: Can):
+    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         super().__init__(sim, can)
 
         self._devices = [

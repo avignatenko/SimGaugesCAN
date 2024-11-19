@@ -1,21 +1,20 @@
 import asyncio
 import logging
 
-from .. import common
-from ..devices import Device
-from .busvolts import BusVolts
+from .. import cansimlib
+from . import busvolts
 
 logger = logging.getLogger(__name__)
 
 
-class LeftBottomPanel(Device):
+class LeftBottomPanel(cansimlib.Device):
 
     CAN_ID = 23
 
     async def init(self):
 
         self._task_cranking = None
-        self._bus_volts = BusVolts(self._sim)
+        self._bus_volts = busvolts.BusVolts(self._sim)
         self._bus_volts.register_ok_status_change(self._bus_volts_ok_changed)
         self._gear_light_on = [False, False, False]
 
@@ -51,21 +50,21 @@ class LeftBottomPanel(Device):
         await self._can.send(
             self.CAN_ID,
             2,
-            common.make_payload_byte(
+            cansimlib.make_payload_byte(
                 int(self._bus_volts.bus_volts_ok() and self._gear_light_on[0])
             ),
         )
         await self._can.send(
             self.CAN_ID,
             0,
-            common.make_payload_byte(
+            cansimlib.make_payload_byte(
                 int(self._bus_volts.bus_volts_ok() and self._gear_light_on[1])
             ),
         )
         await self._can.send(
             self.CAN_ID,
             1,
-            common.make_payload_byte(
+            cansimlib.make_payload_byte(
                 int(self._bus_volts.bus_volts_ok() and self._gear_light_on[2])
             ),
         )
@@ -82,7 +81,7 @@ class LeftBottomPanel(Device):
     async def _on_can_event(self, port, payload):
         match port:
             case 8:  # ap rotator
-                data = common.payload_float(payload)
+                data = cansimlib.payload_float(payload)
                 if data < 440:
                     roll_value = (data - 440) / (0 + 440) * 35
                 else:
@@ -93,13 +92,13 @@ class LeftBottomPanel(Device):
                 )
 
             case 6:  # ap left button
-                data = common.payload_byte(payload)
+                data = cansimlib.payload_byte(payload)
                 await self._sim.send_dataref(
                     self._thranda_autopilot_roll_dataref_id, None, data
                 )
 
             case 7:  #  ap right button
-                data = common.payload_byte(payload)
+                data = cansimlib.payload_byte(payload)
                 await self._sim.send_dataref(
                     self._thranda_autopilot_hdg_dataref_id, None, data
                 )
@@ -111,13 +110,13 @@ class LeftBottomPanel(Device):
                 pass
 
             case 4:  # gear
-                data = common.payload_byte(payload)
+                data = cansimlib.payload_byte(payload)
                 await self._sim.send_dataref(
                     self._gear_handle_status_dataref_id, None, data
                 )
 
             case 5:  # ignition
-                data = common.payload_byte(payload)
+                data = cansimlib.payload_byte(payload)
                 if self._task_cranking is not None:
                     self._task_cranking.cancel()
                     self._task_cranking = None

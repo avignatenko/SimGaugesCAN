@@ -1,14 +1,11 @@
 import logging
 
-from .. import common
-from ..can import Can
-from ..devices import Device
-from ..sim import Sim
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class GyroSuction(Device):
+class GyroSuction(cansimlib.Device):
 
     CAN_ID = 29
 
@@ -26,4 +23,4 @@ class GyroSuction(Device):
         await self._set_suction(value)
 
     async def _set_suction(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))

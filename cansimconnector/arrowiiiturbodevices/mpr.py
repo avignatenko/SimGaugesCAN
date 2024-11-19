@@ -1,14 +1,11 @@
 import logging
 
-from .. import common
-from ..can import Can
-from ..devices import Device
-from ..sim import Sim
+from .. import cansimlib
 
 logger = logging.getLogger(__name__)
 
 
-class MPR(Device):
+class MPR(cansimlib.Device):
 
     CAN_ID = 22
 
@@ -34,11 +31,11 @@ class MPR(Device):
         await self._set_mpr(value)
 
     async def _set_mpr(self, value: float):
-        await self._can.send(self.CAN_ID, 0, common.make_payload_float(value))
+        await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))
 
     async def _on_fuel_flow_update(self, value):
         logger.debug("udpate received!! %s", value)
         await self._set_fuel_flow(value)
 
     async def _set_fuel_flow(self, value: float):
-        await self._can.send(self.CAN_ID, 1, common.make_payload_float(value * 1350))
+        await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_float(value * 1350))

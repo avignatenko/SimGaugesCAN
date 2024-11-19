@@ -10,7 +10,7 @@ from websockets.asyncio.client import ClientConnection, connect
 logger = logging.getLogger(__name__)
 
 
-class Sim:
+class XPlaneClient:
 
     class DatarefData:
         class CallbackData:

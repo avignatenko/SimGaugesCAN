@@ -1,8 +1,7 @@
 import asyncio
 import logging
 
-from ..can import Can
-from ..sim import Sim
+from .. import cansimlib
 from .airspeed import Airspeed
 from .altitude import Altitude
 from .attitude import Attitude
@@ -21,7 +20,7 @@ from .vertspeed import VerticalSpeed
 logger = logging.getLogger(__name__)
 
 
-def register(sim: Sim, can: Can):
+def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
     global _devices
 
     _devices = [
