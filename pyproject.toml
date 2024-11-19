@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools"]               # REQUIRED if [build-system] table is used
+build-backend = "setuptools.build_meta" # If not defined, then legacy behavior can happen.
+
+
+[project]
+name = "cansimmanager"
+version = "0.0.1"
+requires-python = ">=3.9"
+
+# For an analysis of this field vs pip's requirements files see:
+# https://packaging.python.org/discussions/install-requires-vs-requirements/
+dependencies = ["aiohttp", "pyserial", "python-can", "websockets"]
+
+# List additional groups of dependencies here (e.g. development
+# dependencies). Users will be able to install these using the "extras"
+# syntax, for example:
+#
+#   $ pip install sampleproject[dev]
+#
+# Optional dependencies the project provides. These are commonly
+# referred to as "extras". For a more extensive definition see:
+# https://packaging.python.org/en/latest/specifications/dependency-specifiers/#extras
+[project.optional-dependencies]
+dev = ["check-manifest"]
+test = ["coverage"]
+
+# The following would provide a command line executable called `sample`
+# which executes the function `main` from this package when invoked.
+#[project.scripts]
+#sample = "sample:main"
+
+
+# This is configuration specific to the `setuptools` build backend.
+# If you are using a different build backend, you will need to change this.
+[tool.setuptools]
+# If there are data files included in your packages that need to be
+# installed, specify them here.
+#package-data = { "sample" = ["*.dat"] }
