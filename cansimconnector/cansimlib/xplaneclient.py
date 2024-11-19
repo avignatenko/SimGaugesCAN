@@ -136,13 +136,19 @@ class XPlaneClient:
         # - wait for the message
         # - process the message
         logger.info("Starting WebSockets handler")
+        background_tasks = set()
+
         while True:
             data = await self._wsclient.recv(decode=False)
             data_json = json.loads(data)
             # switch by message type
             match data_json["type"]:
                 case "dataref_update_values":
-                    asyncio.create_task(self._process_dataref_update(data_json["data"]))
+                    task = asyncio.create_task(
+                        self._process_dataref_update(data_json["data"])
+                    )
+                    background_tasks.add(task)
+                    task.add_done_callback(background_tasks.discard)
                 case "result":
                     if data_json["success"] == False:
                         logger.error(

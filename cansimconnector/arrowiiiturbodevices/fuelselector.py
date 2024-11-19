@@ -20,11 +20,8 @@ class FuelSelector(cansimlib.Device):
     async def _on_fuel_tank_selector(self, port, payload):
         value = cansimlib.payload_byte(payload)
 
-        xpl_selector = 0
-        if value == 1:
-            xpl_selector = 1
-        elif value == 2:
-            xpl_selector = 3
+        selector_map = {1: 1, 2: 3, 0: 0}
+        xpl_selector = selector_map[value]
 
         await self._sim.send_dataref(
             self._fuel_tank_selector_dataref_id, None, xpl_selector

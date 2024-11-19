@@ -43,6 +43,8 @@ class CANClient:
 
         logger.info("Starting CAN handler")
 
+        background_tasks = set()
+
         while True:
             message = await reader.get_message()
             logger.debug("CAN message: %s", message.arbitration_id)
@@ -54,10 +56,12 @@ class CANClient:
                 continue
 
             for callback in callbacks:
-                asyncio.create_task(
+                task = asyncio.create_task(
                     callback(
                         common.port_from_canid(message.arbitration_id), message.data
                     )
                 )
+                background_tasks.add(task)
+                task.add_done_callback(background_tasks.discard)
 
         notifier.stop()

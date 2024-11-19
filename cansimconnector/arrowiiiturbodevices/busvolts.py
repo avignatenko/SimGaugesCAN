@@ -26,8 +26,10 @@ class BusVolts:
         new_volts_ok = value > 5
         if self._volts_ok != new_volts_ok:
             self._volts_ok = new_volts_ok
-            for callback in self._callbacks:
-                asyncio.create_task(callback(new_volts_ok))
+
+            asyncio.gather(
+                *map(lambda callback: callback(new_volts_ok), self._callbacks)
+            )
 
     def bus_volts_ok(self):
         return self._volts_ok
