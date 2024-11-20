@@ -74,7 +74,9 @@ class XPlaneClient:
 
     async def connect(self, uri):
         try:
-            self._httpsession = aiohttp.ClientSession(base_url=f"http://{uri}")
+            self._httpsession = aiohttp.ClientSession(
+                base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=1)
+            )
             self._wsclient = await connect(f"ws://{uri}/api/v1")
         except (OSError, TimeoutError):
             if self._httpsession is not None:

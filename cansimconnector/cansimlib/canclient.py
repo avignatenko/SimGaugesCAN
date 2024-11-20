@@ -34,7 +34,12 @@ class CANClient:
         )
 
     async def subscribe_message(self, can_id: int, function: Callable):
-        self._callbacks.setdefault(can_id, []).append(function)
+        await self.subscribe_message_port(can_id, None, function)
+
+    async def subscribe_message_port(self, can_id: int, port: int, function: Callable):
+        canid_callbacks = self._callbacks.setdefault(can_id, {})
+        port_callbacks = canid_callbacks.setdefault(port, [])
+        port_callbacks.append(function)
 
     async def run(self):
         reader = can.AsyncBufferedReader()
@@ -49,18 +54,17 @@ class CANClient:
             message = await reader.get_message()
             logger.debug("CAN message: %s", message.arbitration_id)
 
-            callbacks = self._callbacks.get(
-                common.src_id_from_canid(message.arbitration_id)
-            )
-            if not callbacks:
+            src_id = common.src_id_from_canid(message.arbitration_id)
+            port = common.port_from_canid(message.arbitration_id)
+
+            canid_callbacks = self._callbacks.get(src_id)
+            if not canid_callbacks:
                 continue
 
+            callbacks = canid_callbacks.get(None, []) + canid_callbacks.get(port, [])
+
             for callback in callbacks:
-                task = asyncio.create_task(
-                    callback(
-                        common.port_from_canid(message.arbitration_id), message.data
-                    )
-                )
+                task = asyncio.create_task(callback(port, message.data))
                 background_tasks.add(task)
                 task.add_done_callback(background_tasks.discard)
 

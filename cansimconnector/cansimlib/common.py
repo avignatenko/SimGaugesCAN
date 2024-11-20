@@ -30,6 +30,10 @@ def payload_byte(data) -> int:
     return data[0]
 
 
+def payload_ushort(data) -> int:
+    return struct.unpack("<H", data)[0]
+
+
 def payload_float(data) -> float:
     return struct.unpack("<f", data)[0]
 

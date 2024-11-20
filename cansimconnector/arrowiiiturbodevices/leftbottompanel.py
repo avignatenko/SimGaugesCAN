@@ -16,9 +16,9 @@ class LeftBottomPanel(cansimlib.Device):
         self._task_cranking = None
         self._bus_volts = busvolts.BusVolts(self._sim)
         self._bus_volts.register_ok_status_change(self._bus_volts_ok_changed)
-        self._gear_light_on = [False, False, False]
-
         await self._bus_volts.init()
+
+        self._gear_light_on = [False, False, False]
 
         self._roll_knob_dataref_id = await self._sim.get_dataref_id(
             "thranda/autopilot/rollKnob"

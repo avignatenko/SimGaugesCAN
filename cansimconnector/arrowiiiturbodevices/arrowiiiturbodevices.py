@@ -15,6 +15,7 @@ from .leftbottompanel import LeftBottomPanel
 from .mpr import MPR
 from .rpm import RPM
 from .stec30alt import STec30Alt
+from .transponder import Transponder
 from .turnroll import TurnRoll
 from .vertspeed import VerticalSpeed
 
@@ -44,6 +45,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         FuelSelector(sim, can),
         # right
         ButtonsPanel(sim, can),
+        Transponder(sim, can),
     ]
 
 
