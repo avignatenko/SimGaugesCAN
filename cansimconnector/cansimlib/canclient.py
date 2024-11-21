@@ -15,12 +15,18 @@ class CANClient:
         self._bus: can.interface.Bus = None
         self._callbacks = {}
 
-    async def connect(self, channel, tty_baudrate):
+    def _init_bus(self, channel, tty_baudrate):
         self._bus = can.interface.Bus(
             interface="slcan",
             channel=channel,
             ttyBaudrate=tty_baudrate,
             bitrate=1000000,
+        )
+
+    async def connect(self, channel, tty_baudrate):
+
+        await asyncio.get_running_loop().run_in_executor(
+            None, self._init_bus, channel, tty_baudrate
         )
 
     async def send(self, target_id: int, target_port: int, payload: list):
