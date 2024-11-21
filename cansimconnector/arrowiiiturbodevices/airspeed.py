@@ -14,7 +14,7 @@ class Airspeed(cansimlib.Device):
             "simcoders/rep/cockpit2/gauges/indicators/airspeed_kts_pilot",
             None,
             self._on_airspeed_update,
-            0.05,
+            0.01,
         )
 
     async def _on_airspeed_update(self, value):

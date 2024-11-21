@@ -14,7 +14,7 @@ class Altitude(cansimlib.Device):
             "simcoders/rep/cockpit2/gauges/indicators/altitude_ft_pilot",
             None,
             self._on_altitude_update,
-            tolerance=0.25,
+            tolerance=0.1,
             freq=5,
         )
 
