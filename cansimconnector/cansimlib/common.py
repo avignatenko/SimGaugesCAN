@@ -1,4 +1,5 @@
 import json
+import os
 import struct
 
 import can
@@ -60,7 +61,7 @@ def send_command(bus, id_src, id_dst, priority, port, payload):
     bus.send(msg)
 
 
-def read_config():
-    with open("config.json", "r") as file:
+def read_config(folder="."):
+    with open(os.path.join(folder, "config.json"), "r") as file:
         data = json.load(file)
         return data
