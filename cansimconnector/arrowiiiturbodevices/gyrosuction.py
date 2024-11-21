@@ -14,7 +14,7 @@ class GyroSuction(cansimlib.Device):
             "sim/cockpit2/gauges/indicators/suction_1_ratio",
             None,
             self._on_suction_update,
-            0.1,
+            0.01,
             5,  # Hz
         )
 
