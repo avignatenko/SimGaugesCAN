@@ -38,7 +38,12 @@ async def connect_can(config) -> cansimlib.CANClient:
 
 
 async def main_loop() -> None:
+
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+
+    asyncio.get_event_loop().slow_callback_duration = (
+        15  # all callbacks should fit into 15ms
+    )
 
     logger.info("Reading config")
     config = cansimlib.read_config()
@@ -70,8 +75,13 @@ async def main_loop() -> None:
 
 
 def main():
-    asyncio.run(main_loop(), debug=True)
-    asyncio.get_event_loop().slow_callback_duration(15)
+    if sys.platform in ("win32", "cygwin", "cli"):
+        from winloop import run
+    else:
+        # if we're on apple or linux do this instead
+        from uvloop import run
+
+    run(main_loop(), debug=True)
 
 
 if __name__ == "__main__":
