@@ -32,7 +32,7 @@ class XPlaneClient:
     async def _process_single_callback_update(self, dataref, callback):
 
         # changed enough?
-        if callback.last_value:
+        if callback.last_value and callback.tolerance:
             small_change = True
             for last_value, value in zip(callback.last_value, dataref.value):
                 small_change = abs(last_value - value) < callback.tolerance

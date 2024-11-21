@@ -1,14 +1,14 @@
 import logging
 from typing import Callable
 
-from . import canclient, common, xplaneclient
+from . import canclient, common, xplanewsclient
 
 logger = logging.getLogger(__name__)
 
 
 class Device:
 
-    def __init__(self, sim: xplaneclient.XPlaneClient, can: canclient.CANClient):
+    def __init__(self, sim: xplanewsclient.XPlaneClient, can: canclient.CANClient):
         self._sim = sim
         self._can = can
 
@@ -17,7 +17,7 @@ class PhysicalSwitch(Device):
 
     def __init__(
         self,
-        sim: xplaneclient.XPlaneClient,
+        sim: xplanewsclient.XPlaneClient,
         can: canclient.CANClient,
         can_id: int,
         port: int,
@@ -49,7 +49,7 @@ class SingleValueIndicator(Device):
 
     def __init__(
         self,
-        sim: xplaneclient.XPlaneClient,
+        sim: xplanewsclient.XPlaneClient,
         can: canclient.CANClient,
         can_id: int,
         port: int,
