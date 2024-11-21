@@ -70,7 +70,8 @@ async def main_loop() -> None:
 
 
 def main():
-    asyncio.run(main_loop())
+    asyncio.run(main_loop(), debug=True)
+    asyncio.get_event_loop().slow_callback_duration(15)
 
 
 if __name__ == "__main__":

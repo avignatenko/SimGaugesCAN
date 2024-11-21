@@ -294,5 +294,21 @@ class STec30Test(BaseGaugeTest):
                 break
 
 
+class MultiDeviceStressTests(unittest.TestCase):
+
+    def test_single_arrow_gauges_test(self):
+
+        for i in range(150):
+            cs.send_command(
+                bus,
+                id_src=1,
+                id_dst=16,
+                priority=0,
+                port=0,
+                payload=cs.make_payload_float(i),
+            )
+            time.sleep(0.001)
+
+
 if __name__ == "__main__":
     unittest.main()

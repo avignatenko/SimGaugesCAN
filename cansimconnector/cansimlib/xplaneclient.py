@@ -20,10 +20,11 @@ class XPlaneClient:
                 self.freq = freq
                 self.last_value = None
                 self.last_update_time = None
-                self.update_scheduled = False
+                self.update_task = None
 
         def __init__(self):
             self.value = None
+            self.last_update_time = None
             self.update_callbacks = []
 
     def __init__(self):
@@ -31,51 +32,77 @@ class XPlaneClient:
         self._httpsession: aiohttp.ClientSession = None
         self._datarefsStorage: dict[int, self.DatarefData] = {}
 
-    async def _process_dataref_update(self, data):
-        for dataref_id_str, value in data.items():
-            dataref = self._datarefsStorage.get(int(dataref_id_str))
-            if not dataref:
-                continue
+    async def _wait_and_call_callback(self, time_to_update, dataref, callback):
+        if time_to_update > 0:
+            await asyncio.sleep(time_to_update)
 
-            # fix for arrays with lenght of one
-            if isinstance(value, list) and len(value) == 1:
-                value = value[0]
+        value2 = dataref.value[0] if len(dataref.value) == 1 else dataref.value
 
-            # change data for value
-            dataref.value = value
+        callback.last_update_time = time.time()
+        callback.last_value = dataref.value
 
-            # check if we need update someone
-            for callback in dataref.update_callbacks:
+        await callback.callback(value2)
 
-                if callback.update_scheduled:
-                    continue
+    async def _process_single_callback_update(self, dataref, callback):
 
-                # changed enough?
-                if (
-                    callback.last_value
-                    and abs(callback.last_value - dataref.value) < callback.tolerance
-                ):
-                    continue
+        # changed enough?
+        if callback.last_value:
+            small_change = True
+            for last_value, value in zip(callback.last_value, dataref.value):
+                small_change = abs(last_value - value) < callback.tolerance
+                if not small_change:
+                    break
+            if small_change:
+                return
 
-                callback.update_scheduled = True
+        if callback.update_task is not None and not callback.update_task.done():
+            return
 
-                # let's figure out when to update next time
-                if callback.last_update_time:
-                    time_to_next_update = (
-                        callback.last_update_time + (1.0 / callback.freq) - time.time()
-                    )
-                    if time_to_next_update > 0:
-                        await asyncio.sleep(time_to_next_update)
+        # let's figure out when to update next time
+        time_to_next_update = 0
+        if callback.last_update_time:
+            time_to_next_update = (
+                callback.last_update_time + (1.0 / callback.freq) - time.time()
+            )
 
-                callback.last_update_time = time.time()
-                callback.last_value = dataref.value
-                await callback.callback(dataref.value)
-                callback.update_scheduled = False
+        callback.update_task = asyncio.create_task(
+            self._wait_and_call_callback(0, dataref, callback)
+        )
+
+    # await callback.update_task
+
+    async def _process_single_dataref_update(self, dataref_id, value):
+        dataref = self._datarefsStorage.get(dataref_id)
+        if not dataref:
+            logger.warning("Received unknown dataref %s", dataref_id)
+            return
+
+        if not isinstance(value, list):
+            value = [value]
+
+        dataref.value = value
+
+        # now iterate over callbacks
+
+        callbacks_processes = [
+            asyncio.create_task(self._process_single_callback_update(dataref, callback))
+            for callback in dataref.update_callbacks
+        ]
+        await asyncio.gather(*callbacks_processes)
+
+    async def _process_datarefs_update_2(self, data):
+        datarefs_processes = [
+            asyncio.create_task(
+                self._process_single_dataref_update(int(dataref_id_str), value)
+            )
+            for dataref_id_str, value in data.items()
+        ]
+        await asyncio.gather(*datarefs_processes)
 
     async def connect(self, uri):
         try:
             self._httpsession = aiohttp.ClientSession(
-                base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=1)
+                base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=10)
             )
             self._wsclient = await connect(f"ws://{uri}/api/v1")
         except (OSError, TimeoutError):
@@ -90,7 +117,9 @@ class XPlaneClient:
             f"/api/v1/datarefs?filter[name]={dataref}"
         ) as response:
             json = await response.json()
-            return json["data"][0]["id"]
+            id = json["data"][0]["id"]
+            logger.debug("Dataref %s ID is %s", dataref, id)
+            return id
 
     async def send_dataref(self, dataref_id: int, index, dataref_value) -> None:
 
@@ -138,7 +167,6 @@ class XPlaneClient:
         # - wait for the message
         # - process the message
         logger.info("Starting WebSockets handler")
-        background_tasks = set()
 
         while True:
             data = await self._wsclient.recv(decode=False)
@@ -146,11 +174,7 @@ class XPlaneClient:
             # switch by message type
             match data_json["type"]:
                 case "dataref_update_values":
-                    task = asyncio.create_task(
-                        self._process_dataref_update(data_json["data"])
-                    )
-                    background_tasks.add(task)
-                    task.add_done_callback(background_tasks.discard)
+                    await self._process_datarefs_update_2(data_json["data"])
                 case "result":
                     if data_json["success"] == False:
                         logger.error(
