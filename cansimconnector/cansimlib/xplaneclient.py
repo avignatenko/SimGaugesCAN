@@ -19,29 +19,15 @@ class XPlaneClient:
                 self.tolerance = tolerance
                 self.freq = freq
                 self.last_value = None
-                self.last_update_time = None
-                self.update_task = None
 
         def __init__(self):
             self.value = None
-            self.last_update_time = None
             self.update_callbacks = []
 
     def __init__(self):
         self._wsclient: ClientConnection = None
         self._httpsession: aiohttp.ClientSession = None
         self._datarefsStorage: dict[int, self.DatarefData] = {}
-
-    async def _wait_and_call_callback(self, time_to_update, dataref, callback):
-        if time_to_update > 0:
-            await asyncio.sleep(time_to_update)
-
-        value2 = dataref.value[0] if len(dataref.value) == 1 else dataref.value
-
-        callback.last_update_time = time.time()
-        callback.last_value = dataref.value
-
-        await callback.callback(value2)
 
     async def _process_single_callback_update(self, dataref, callback):
 
@@ -55,19 +41,9 @@ class XPlaneClient:
             if small_change:
                 return
 
-        if callback.update_task is not None and not callback.update_task.done():
-            return
-
-        # let's figure out when to update next time
-        time_to_next_update = 0
-        if callback.last_update_time:
-            time_to_next_update = (
-                callback.last_update_time + (1.0 / callback.freq) - time.time()
-            )
-
-        callback.update_task = asyncio.create_task(
-            self._wait_and_call_callback(0, dataref, callback)
-        )
+        value2 = dataref.value[0] if len(dataref.value) == 1 else dataref.value
+        callback.last_value = dataref.value
+        await callback.callback(value2)
 
     # await callback.update_task
 
@@ -104,7 +80,10 @@ class XPlaneClient:
             self._httpsession = aiohttp.ClientSession(
                 base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=10)
             )
-            self._wsclient = await connect(f"ws://{uri}/api/v1")
+            # no compression, no ping for performance (maybe reconsider)
+            self._wsclient = await connect(
+                f"ws://{uri}/api/v1", compression=None, ping_interval=None
+            )
         except (OSError, TimeoutError):
             if self._httpsession is not None:
                 await self._httpsession.close()
