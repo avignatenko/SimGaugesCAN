@@ -118,6 +118,36 @@ class XPlaneClient:
         }
         await self._wsclient.send(json.dumps(update_request))
 
+    async def get_dataref(
+        self,
+        dataref_id: int,
+        idx: int | None,
+        tolerance: float = 0.01,
+        freq: float = 10,
+    ):
+        dataref_data = await self.get_dataref_data(dataref_id, idx)
+
+    async def get_dataref_data(self, dataref_id: int, idx: int | None):
+        # subscribed already? (fixme - need to deal with freq)
+        if dataref_id not in self._datarefs_storage:
+
+            dataref_subscription = {"id": dataref_id}
+            if idx is not None:
+                dataref_subscription["index"] = idx
+            subscribe_request = {
+                "req_id": 1,
+                "type": "dataref_subscribe_values",
+                "params": {"datarefs": [dataref_subscription]},
+            }
+
+            await self._wsclient.send(json.dumps(subscribe_request))
+
+            self._datarefs_storage[dataref_id] = self.DatarefData()
+
+        dataref_data = self._datarefs_storage[dataref_id]
+
+        return dataref_data
+
     async def subscribe_dataref(
         self,
         dataref: str,
@@ -128,24 +158,12 @@ class XPlaneClient:
         context=None,
     ) -> None:
         dataref_id = await self.get_dataref_id(dataref)
-
-        dataref_subscription = {"id": dataref_id}
-        if idx is not None:
-            dataref_subscription["index"] = idx
-
-        subscribe_request = {
-            "req_id": 1,
-            "type": "dataref_subscribe_values",
-            "params": {"datarefs": [dataref_subscription]},
-        }
-
-        await self._wsclient.send(json.dumps(subscribe_request))
+        dataref_data = await self.get_dataref_data(dataref_id, idx)
 
         callback_data = self.DatarefData.CallbackData(
             callback, tolerance, freq, context
         )
 
-        dataref_data = self._datarefs_storage.setdefault(dataref_id, self.DatarefData())
         dataref_data.update_callbacks.append(callback_data)
 
     async def run(self) -> None:
