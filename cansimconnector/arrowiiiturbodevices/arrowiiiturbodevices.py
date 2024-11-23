@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from .. import cansimlib
-from .airspeed import Airspeed
+from .airspeed import Airspeed, Airspeed2
 from .altitude import Altitude
 from .annunciators import Annunciators
 from .attitude import Attitude
@@ -21,10 +21,13 @@ from .turnroll import TurnRoll
 from .vertspeed import VerticalSpeed
 
 logger = logging.getLogger(__name__)
+_devices = []
+_devices_2 = []
 
 
 def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
     global _devices
+    global _devices_2
 
     _devices = [
         # upper-left panel
@@ -50,6 +53,12 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         Transponder(sim, can),
     ]
 
+    _devices_2 = [Airspeed2(sim, can)]
+
 
 async def init():
     asyncio.gather(*map(lambda obj: obj.init(), _devices))
+
+
+async def run():
+    asyncio.gather(*map(lambda obj: obj.run(), _devices_2))

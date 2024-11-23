@@ -72,6 +72,7 @@ async def main_loop() -> None:
     # run can receiver and websockets receiver async
     logger.info("Starting main loop")
     async with asyncio.TaskGroup() as tg:
+        tg.create_task(arrowiiiturbodevices.run())
         tg.create_task(can.run())
         tg.create_task(sim.run())
 

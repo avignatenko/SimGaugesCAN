@@ -1,3 +1,4 @@
+import asyncio
 import enum
 import logging
 from dataclasses import dataclass
@@ -12,6 +13,17 @@ class Device:
     def __init__(self, sim: xplanewsclient.XPlaneClient, can: canclient.CANClient):
         self._sim = sim
         self._can = can
+
+    async def run_sim(self):
+        pass
+
+    async def run_can(self):
+        pass
+
+    async def run(self):
+        async with asyncio.TaskGroup() as tg:
+            tg.create_task(self.run_sim())
+            tg.create_task(self.run_can())
 
 
 class PhysicalSwitch(Device):

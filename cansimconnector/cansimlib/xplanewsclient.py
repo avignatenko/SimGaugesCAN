@@ -23,6 +23,7 @@ class XPlaneClient:
 
         def __init__(self):
             self.value = None
+            self.value_future = asyncio.Future()
             self.update_callbacks = []
 
     def __init__(self):
@@ -45,6 +46,7 @@ class XPlaneClient:
 
         value2 = dataref.value[0] if len(dataref.value) == 1 else dataref.value
         callback.last_value = dataref.value
+
         await (
             callback.callback(value2)
             if callback.context is None
@@ -63,6 +65,8 @@ class XPlaneClient:
             value = [value]
 
         dataref.value = value
+        dataref.value_future.set_result(value)
+        dataref.value_future = asyncio.Future()
 
         # now iterate over callbacks
 
@@ -118,16 +122,13 @@ class XPlaneClient:
         }
         await self._wsclient.send(json.dumps(update_request))
 
-    async def get_dataref(
-        self,
-        dataref_id: int,
-        idx: int | None,
-        tolerance: float = 0.01,
-        freq: float = 10,
-    ):
-        dataref_data = await self.get_dataref_data(dataref_id, idx)
+    def get_dataref(self, dataref_id: int):
+        return self._datarefs_storage.get(dataref_id).value
 
-    async def get_dataref_data(self, dataref_id: int, idx: int | None):
+    def wait_dataref(self, dataref_id: int):
+        return self._datarefs_storage.get(dataref_id).value_future
+
+    async def _subsribe_and_get_dataref_data(self, dataref_id: int, idx: int | None):
         # subscribed already? (fixme - need to deal with freq)
         if dataref_id not in self._datarefs_storage:
 
@@ -148,6 +149,13 @@ class XPlaneClient:
 
         return dataref_data
 
+    async def subscribe_dataref_no_callback(
+        self, dataref: str, idx: int | None = None, freq: float = 10
+    ) -> int:
+        dataref_id = await self.get_dataref_id(dataref)
+        await self._subsribe_and_get_dataref_data(dataref_id, idx)
+        return dataref_id
+
     async def subscribe_dataref(
         self,
         dataref: str,
@@ -158,7 +166,7 @@ class XPlaneClient:
         context=None,
     ) -> None:
         dataref_id = await self.get_dataref_id(dataref)
-        dataref_data = await self.get_dataref_data(dataref_id, idx)
+        dataref_data = await self._subsribe_and_get_dataref_data(dataref_id, idx)
 
         callback_data = self.DatarefData.CallbackData(
             callback, tolerance, freq, context
