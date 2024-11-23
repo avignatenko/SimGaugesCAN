@@ -11,14 +11,16 @@ logger = logging.getLogger(__name__)
 
 
 class XPlaneClient:
-
     class DatarefData:
         class CallbackData:
-            def __init__(self, callback: Callable, tolerance: float, freq: float):
+            def __init__(
+                self, callback: Callable, tolerance: float, freq: float, context
+            ):
                 self.callback = callback
                 self.tolerance = tolerance
                 self.freq = freq
                 self.last_value = None
+                self.context = context
 
         def __init__(self):
             self.value = None
@@ -29,8 +31,9 @@ class XPlaneClient:
         self._httpsession: aiohttp.ClientSession = None
         self._datarefsStorage: dict[int, self.DatarefData] = {}
 
-    async def _process_single_callback_update(self, dataref, callback):
-
+    async def _process_single_callback_update(
+        self, dataref, callback: DatarefData.CallbackData
+    ):
         # changed enough?
         if callback.last_value and callback.tolerance:
             small_change = True
@@ -43,7 +46,11 @@ class XPlaneClient:
 
         value2 = dataref.value[0] if len(dataref.value) == 1 else dataref.value
         callback.last_value = dataref.value
-        await callback.callback(value2)
+        await (
+            callback.callback(value2)
+            if callback.context is None
+            else callback.callback(value2, callback.context)
+        )
 
     # await callback.update_task
 
@@ -101,7 +108,6 @@ class XPlaneClient:
             return id
 
     async def send_dataref(self, dataref_id: int, index, dataref_value) -> None:
-
         dataref_value = {"id": dataref_id, "value": dataref_value}
         if index is not None:
             dataref_value["index"] = index
@@ -116,17 +122,17 @@ class XPlaneClient:
     async def subscribe_dataref(
         self,
         dataref: str,
-        index,
+        idx: int | None,
         callback: Callable,
         tolerance: float,
         freq: float = 10,
+        context=None,
     ) -> None:
-
         dataref_id = await self.get_dataref_id(dataref)
 
         dataref_subscription = {"id": dataref_id}
-        if index is not None:
-            dataref_subscription["index"] = index
+        if idx is not None:
+            dataref_subscription["index"] = idx
 
         subscribe_request = {
             "req_id": 1,
@@ -136,7 +142,9 @@ class XPlaneClient:
 
         await self._wsclient.send(json.dumps(subscribe_request))
 
-        callback_data = self.DatarefData.CallbackData(callback, tolerance, freq)
+        callback_data = self.DatarefData.CallbackData(
+            callback, tolerance, freq, context
+        )
 
         dataref_data = self._datarefsStorage.setdefault(dataref_id, self.DatarefData())
         dataref_data.update_callbacks.append(callback_data)

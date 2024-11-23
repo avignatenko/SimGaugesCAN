@@ -6,70 +6,64 @@ from .. import cansimlib
 logger = logging.getLogger(__name__)
 
 
-class GeneratorAmps(cansimlib.SingleValueIndicator):
-
+class IndicatorsPanel1(cansimlib.Device):
     def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
-        super().__init__(
+        super().__init__(sim, can)
+
+        generator = cansimlib.SingleValueIndicator(
             sim,
             can,
             can_id=27,
             port=0,
-            dataref_str="sim/cockpit2/electrical/generator_amps",
-            idx=0,
-            tolerance=0.1,
+            datarefs=[
+                cansimlib.SingleValueIndicator.DatarefSubsription(
+                    dataref_str="sim/cockpit2/electrical/generator_amps",
+                    idx=0,
+                    tolerance=0.1,
+                )
+            ],
         )
 
-
-class OilTemp(cansimlib.SingleValueIndicator):
-    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
-        super().__init__(
+        oil_temp = cansimlib.SingleValueIndicator(
             sim,
             can,
             can_id=27,
             port=1,
-            dataref_str="simcoders/rep/engine/oil/temp_f_0",
-            idx=None,
-            tolerance=0.1,
+            datarefs=[
+                cansimlib.SingleValueIndicator.DatarefSubsription(
+                    dataref_str="simcoders/rep/engine/oil/temp_f_0",
+                    tolerance=0.1,
+                )
+            ],
         )
 
-
-class OilPressure(cansimlib.SingleValueIndicator):
-    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
-        super().__init__(
+        oil_pressure = cansimlib.SingleValueIndicator(
             sim,
             can,
             can_id=27,
             port=2,
-            dataref_str="simcoders/rep/engine/oil/press_psi_0",
-            idx=None,
-            tolerance=0.1,
+            datarefs=[
+                cansimlib.SingleValueIndicator.DatarefSubsription(
+                    dataref_str="simcoders/rep/engine/oil/press_psi_0",
+                    tolerance=0.1,
+                )
+            ],
         )
 
-
-class OutsideAir(cansimlib.SingleValueIndicator):
-    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
-        super().__init__(
+        outside_air = cansimlib.SingleValueIndicator(
             sim,
             can,
             can_id=27,
             port=3,
-            dataref_str="sim/cockpit2/temperature/outside_air_temp_degc",
-            idx=None,
-            tolerance=0.25,
+            datarefs=[
+                cansimlib.SingleValueIndicator.DatarefSubsription(
+                    dataref_str="sim/cockpit2/temperature/outside_air_temp_degc",
+                    tolerance=0.5,
+                )
+            ],
         )
 
-
-class IndicatorsPanel1(cansimlib.Device):
-
-    def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
-        super().__init__(sim, can)
-
-        self._devices = [
-            GeneratorAmps(sim, can),
-            OilTemp(sim, can),
-            OilPressure(sim, can),
-            OutsideAir(sim, can),
-        ]
+        self._devices = [generator, oil_temp, oil_pressure, outside_air]
 
     async def init(self):
         asyncio.gather(*map(lambda obj: obj.init(), self._devices))

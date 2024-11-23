@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class CANClient:
-
     def __init__(self):
         self._bus: can.interface.Bus = None
         self._callbacks = {}
@@ -24,7 +23,6 @@ class CANClient:
         )
 
     async def connect(self, channel, tty_baudrate):
-
         await asyncio.get_running_loop().run_in_executor(
             None, self._init_bus, channel, tty_baudrate
         )

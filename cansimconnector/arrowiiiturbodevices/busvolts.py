@@ -2,6 +2,16 @@ import asyncio
 
 from .. import cansimlib
 
+bus_volts_subscription = cansimlib.SingleValueIndicator.DatarefSubsription(
+    dataref_str="sim/cockpit2/electrical/bus_volts",
+    idx=0,
+    tolerance=0.1,
+)
+
+
+def electrics_on(volts):
+    return volts > 5
+
 
 class BusVolts:
 
@@ -26,7 +36,7 @@ class BusVolts:
 
         asyncio.gather(*map(lambda callback: callback(self._volts), self._callbacks))
 
-        new_volts_ok = value > 5
+        new_volts_ok = electrics_on(value)
         if self._volts_ok != new_volts_ok:
             self._volts_ok = new_volts_ok
 

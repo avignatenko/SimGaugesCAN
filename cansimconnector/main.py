@@ -18,6 +18,7 @@ async def connect_sim(config) -> cansimlib.XPlaneClient:
             break
         except (OSError, TimeoutError) as e:
             logger.error("Sim connection error: %s, reconnecting", e)
+            await asyncio.sleep(5.0)
             continue
     return sim
 
@@ -32,7 +33,8 @@ async def connect_can(config) -> cansimlib.CANClient:
             break
         except Exception as e:
             logger.error("CAN error: %s, reconnecting", e)
-            asyncio.sleep(2.0)  # CAN doesnt have connection timeout, so we'll wait here
+            # CAN doesnt have connection timeout, so we'll wait here
+            await asyncio.sleep(5.0)
             continue
     return can
 
