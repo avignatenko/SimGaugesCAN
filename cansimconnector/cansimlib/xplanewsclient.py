@@ -1,7 +1,6 @@
 import asyncio
 import json
 import logging
-import time
 from typing import Callable
 
 import aiohttp
@@ -29,7 +28,7 @@ class XPlaneClient:
     def __init__(self):
         self._wsclient: ClientConnection = None
         self._httpsession: aiohttp.ClientSession = None
-        self._datarefsStorage: dict[int, self.DatarefData] = {}
+        self._datarefs_storage: dict[int, self.DatarefData] = {}
 
     async def _process_single_callback_update(
         self, dataref, callback: DatarefData.CallbackData
@@ -55,7 +54,7 @@ class XPlaneClient:
     # await callback.update_task
 
     async def _process_single_dataref_update(self, dataref_id, value):
-        dataref = self._datarefsStorage.get(dataref_id)
+        dataref = self._datarefs_storage.get(dataref_id)
         if not dataref:
             logger.warning("Received unknown dataref %s", dataref_id)
             return
@@ -146,7 +145,7 @@ class XPlaneClient:
             callback, tolerance, freq, context
         )
 
-        dataref_data = self._datarefsStorage.setdefault(dataref_id, self.DatarefData())
+        dataref_data = self._datarefs_storage.setdefault(dataref_id, self.DatarefData())
         dataref_data.update_callbacks.append(callback_data)
 
     async def run(self) -> None:
@@ -163,7 +162,7 @@ class XPlaneClient:
                 case "dataref_update_values":
                     await self._process_datarefs_update_2(data_json["data"])
                 case "result":
-                    if data_json["success"] == False:
+                    if data_json["success"] is False:
                         logger.error(
                             "WS error returned for request %s", data_json["req_id"]
                         )
