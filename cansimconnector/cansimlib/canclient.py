@@ -138,7 +138,7 @@ class CANClient:
 
             value = self._values.get((src_id, port))
             if value is None:
-                logger.warning(
+                logger.debug(
                     "Received CAN value from %s, %s, but no subscribers", src_id, port
                 )
                 # continue

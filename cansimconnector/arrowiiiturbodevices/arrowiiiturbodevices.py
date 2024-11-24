@@ -4,7 +4,7 @@ import logging
 from .. import cansimlib
 from .airspeed import Airspeed, Airspeed2
 from .altitude import Altitude, Altitude2
-from .annunciators import Annunciators
+from .annunciators import Annunciators, Annunciators2
 from .attitude import Attitude
 from .buttonspanel import ButtonsPanel
 from .fuelselector import FuelSelector
@@ -41,7 +41,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         IndicatorsPanel1(sim, can),
         IndicatorsPanel2(sim, can),
         STec30Alt(sim, can),
-        Annunciators(sim, can),
+        #   Annunciators(sim, can),
         # low-left panel
         RPM(sim, can),
         MPR(sim, can),
@@ -53,7 +53,8 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         Transponder(sim, can),
     ]
 
-    _devices_2 = [Airspeed2(sim, can), Altitude2(sim, can)]
+    _devices_2 = [Airspeed2(sim, can), Altitude2(sim, can), Annunciators2(sim, can)]
+    # _devices_2 = [Annunciators2(sim, can)]
 
 
 async def init():

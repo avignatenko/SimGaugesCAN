@@ -12,7 +12,7 @@ class MPR(cansimlib.Device):
     async def init(self):
         await self._sim.subscribe_dataref(
             "sim/cockpit2/engine/indicators/MPR_in_hg",
-            0,
+            None,
             self._on_mpr_update,
             0.01,
             freq=5,
@@ -28,7 +28,7 @@ class MPR(cansimlib.Device):
 
     async def _on_mpr_update(self, value):
         logger.debug("udpate received!! %s", value)
-        await self._set_mpr(value)
+        await self._set_mpr(value[0])
 
     async def _set_mpr(self, value: float):
         await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))

@@ -124,7 +124,7 @@ class XPlaneClient:
     def get_dataref(self, dataref_id: int):
         return self._datarefs_storage.get(dataref_id).value
 
-    def wait_dataref(self, dataref_id: int):
+    def receive_new_dataref(self, dataref_id: int):
         return self._datarefs_storage.get(dataref_id).value_future
 
     async def _subsribe_and_get_dataref_data(self, dataref_id: int, idx: int | None):

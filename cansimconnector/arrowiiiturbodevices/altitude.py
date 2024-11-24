@@ -60,5 +60,5 @@ class Altitude2(cansimlib.Device2):
         )
 
         while True:
-            value = await alt.get_value()
+            value = await alt.receive_new_value()
             await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(-value))

@@ -32,10 +32,10 @@ class Airspeed2(cansimlib.Device2):
     CAN_ID = 16
 
     async def run_sim(self):
-        v = await self.create_dataref(
+        airspeed = await self.create_dataref(
             "simcoders/rep/cockpit2/gauges/indicators/airspeed_kts_pilot"
         )
 
         while True:
-            value = await v.get_value()
+            value = await airspeed.receive_new_value()
             await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))

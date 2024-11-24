@@ -20,7 +20,7 @@ class Dataref:
         self._dt = dt
         self._index = index
         self._tolerance = tolerance
-        self._sim = sim
+        self._sim: xplanewsclient.XPlaneClient = sim
         self._prev_value = None
 
     @classmethod
@@ -43,7 +43,13 @@ class Dataref:
 
         return small_change
 
-    async def get_value(self):
+    def get_value(self):
+        value = self._prev_value
+        if value is None:
+            return value
+        return value[0] if len(value) == 1 else value
+
+    async def receive_new_value(self):
         while True:
             value = self._sim.get_dataref(self._dt)
             if value is not None:
@@ -55,7 +61,7 @@ class Dataref:
                     self._prev_value = value
                     return value[0] if len(value) == 1 else value
 
-            await self._sim.wait_dataref(self._dt)
+            await self._sim.receive_new_dataref(self._dt)
 
 
 class Device2:
