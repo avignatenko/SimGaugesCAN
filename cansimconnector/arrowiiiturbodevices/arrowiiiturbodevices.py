@@ -6,7 +6,7 @@ from .airspeed import Airspeed, Airspeed2
 from .altitude import Altitude, Altitude2
 from .annunciators import Annunciators, Annunciators2
 from .attitude import Attitude, Attitude2
-from .buttonspanel import ButtonsPanel
+from .buttonspanel import ButtonsPanel, ButtonsPanel2
 from .fuelselector import FuelSelector, FuelSelector2
 from .gyrosuction import GyroSuction, GyroSuction2
 from .heading import Heading
@@ -49,7 +49,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         # bottom
         # FuelSelector(sim, can),
         # right
-        ButtonsPanel(sim, can),
+        # ButtonsPanel(sim, can),
         # Transponder(sim, can),
     ]
 
@@ -65,6 +65,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         MPR2(sim, can),
         RPM2(sim, can),
         FuelSelector2(sim, can),
+        ButtonsPanel2(sim, can),
     ]
 
 

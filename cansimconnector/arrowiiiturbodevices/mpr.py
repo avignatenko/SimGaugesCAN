@@ -59,7 +59,7 @@ class MPR2(cansimlib.Device2):
 
     async def run_mpr(self):
         mpr = await self.create_dataref_subscription(
-            "sim/cockpit2/engine/indicators/MPR_in_hg"
+            "sim/cockpit2/engine/indicators/MPR_in_hg", index=[0]
         )
 
         while True:
