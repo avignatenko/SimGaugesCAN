@@ -10,8 +10,8 @@ from .buttonspanel import ButtonsPanel, ButtonsPanel2
 from .fuelselector import FuelSelector, FuelSelector2
 from .gyrosuction import GyroSuction, GyroSuction2
 from .heading import Heading
-from .indicators1 import IndicatorsPanel1
-from .indicators2 import IndicatorsPanel2
+from .indicators1 import IndicatorsPanel1, IndicatorsPanel1_2
+from .indicators2 import IndicatorsPanel2, IndicatorsPanel2_2
 from .leftbottompanel import LeftBottomPanel
 from .mpr import MPR, MPR2
 from .rpm import RPM, RPM2
@@ -38,8 +38,8 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         # Altitude(sim, can),
         # VerticalSpeed(sim, can),
         Heading(sim, can),
-        IndicatorsPanel1(sim, can),
-        IndicatorsPanel2(sim, can),
+        # IndicatorsPanel1(sim, can),
+        # IndicatorsPanel2(sim, can),
         # STec30Alt(sim, can),
         #   Annunciators(sim, can),
         # low-left panel
@@ -67,6 +67,8 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         FuelSelector2(sim, can),
         ButtonsPanel2(sim, can),
         STec30Alt2(sim, can),
+        IndicatorsPanel1_2(sim, can),
+        IndicatorsPanel2_2(sim, can),
     ]
 
 
