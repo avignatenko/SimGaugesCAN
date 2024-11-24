@@ -14,6 +14,65 @@ class Device:
         self._sim = sim
         self._can = can
 
+
+class Dataref:
+    def __init__(self, sim, dt, index: list | None, tolerance=0.01):
+        self._dt = dt
+        self._index = index
+        self._tolerance = tolerance
+        self._sim = sim
+        self._prev_value = None
+
+    @classmethod
+    async def create(cls, sim, dataref_str, index: list | None, tolerance=0.01):
+        dt = await sim.subscribe_dataref_no_callback(dataref_str)
+        self = cls(sim, dt, index, tolerance)
+        return self
+
+    def _is_small_change(self, new_value: list):
+
+        if not self._prev_value or not self._tolerance:
+            return False
+
+        small_change = True
+
+        for prev_value, value in zip(self._prev_value, new_value):
+            small_change = abs(prev_value - value) < self._tolerance
+            if not small_change:
+                break
+
+        return small_change
+
+    async def get_value(self):
+        while True:
+            value = self._sim.get_dataref(self._dt)
+            if value is not None:
+                # remove unused
+                if self._index:
+                    value = [value[i] for i in self._index]
+
+                if not self._is_small_change(value):
+                    self._prev_value = value
+                    return value[0] if len(value) == 1 else value
+
+            await self._sim.wait_dataref(self._dt)
+
+
+class Device2:
+    def __init__(self, sim: xplanewsclient.XPlaneClient, can: canclient.CANClient):
+        self._sim = sim
+        self._can = can
+
+    async def create_dataref(
+        self, dataref_str, index: list[int] | None = None, tolerance=0.01
+    ):
+        return await Dataref.create(
+            self._sim,
+            dataref_str,
+            index,
+            tolerance,
+        )
+
     async def run_sim(self):
         pass
 

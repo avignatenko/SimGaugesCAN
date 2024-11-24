@@ -23,7 +23,7 @@ class XPlaneClient:
 
         def __init__(self):
             self.value = None
-            self.value_future = asyncio.Future()
+            self.value_future = asyncio.get_running_loop().create_future()
             self.update_callbacks = []
 
     def __init__(self):
@@ -61,12 +61,13 @@ class XPlaneClient:
             logger.warning("Received unknown dataref %s", dataref_id)
             return
 
+        # always return list, even for singular items
         if not isinstance(value, list):
             value = [value]
 
         dataref.value = value
         dataref.value_future.set_result(value)
-        dataref.value_future = asyncio.Future()
+        dataref.value_future = asyncio.get_running_loop().create_future()
 
         # now iterate over callbacks
 
@@ -76,19 +77,17 @@ class XPlaneClient:
         ]
         await asyncio.gather(*callbacks_processes)
 
-    async def _process_datarefs_update_2(self, data):
-        datarefs_processes = [
-            asyncio.create_task(
-                self._process_single_dataref_update(int(dataref_id_str), value)
-            )
-            for dataref_id_str, value in data.items()
-        ]
-        await asyncio.gather(*datarefs_processes)
+    async def _process_datarefs_update(self, data):
+        async with asyncio.TaskGroup() as tg:
+            for dataref_id_str, value in data.items():
+                tg.create_task(
+                    self._process_single_dataref_update(int(dataref_id_str), value)
+                )
 
     async def connect(self, uri):
         try:
             self._httpsession = aiohttp.ClientSession(
-                base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=10)
+                base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=100)
             )
             # no compression, no ping for performance (maybe reconsider)
             self._wsclient = await connect(
@@ -150,10 +149,10 @@ class XPlaneClient:
         return dataref_data
 
     async def subscribe_dataref_no_callback(
-        self, dataref: str, idx: int | None = None, freq: float = 10
+        self, dataref: str, freq: float = 10
     ) -> int:
         dataref_id = await self.get_dataref_id(dataref)
-        await self._subsribe_and_get_dataref_data(dataref_id, idx)
+        await self._subsribe_and_get_dataref_data(dataref_id, None)
         return dataref_id
 
     async def subscribe_dataref(
@@ -186,7 +185,7 @@ class XPlaneClient:
             # switch by message type
             match data_json["type"]:
                 case "dataref_update_values":
-                    await self._process_datarefs_update_2(data_json["data"])
+                    await self._process_datarefs_update(data_json["data"])
                 case "result":
                     if data_json["success"] is False:
                         logger.error(

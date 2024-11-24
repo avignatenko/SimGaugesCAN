@@ -3,7 +3,7 @@ import logging
 
 from .. import cansimlib
 from .airspeed import Airspeed, Airspeed2
-from .altitude import Altitude
+from .altitude import Altitude, Altitude2
 from .annunciators import Annunciators
 from .attitude import Attitude
 from .buttonspanel import ButtonsPanel
@@ -32,10 +32,10 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
     _devices = [
         # upper-left panel
         GyroSuction(sim, can),
-        Airspeed(sim, can),
+        # Airspeed(sim, can),
         TurnRoll(sim, can),
         Attitude(sim, can),
-        Altitude(sim, can),
+        # Altitude(sim, can),
         VerticalSpeed(sim, can),
         Heading(sim, can),
         IndicatorsPanel1(sim, can),
@@ -53,7 +53,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         Transponder(sim, can),
     ]
 
-    _devices_2 = [Airspeed2(sim, can)]
+    _devices_2 = [Airspeed2(sim, can), Altitude2(sim, can)]
 
 
 async def init():
