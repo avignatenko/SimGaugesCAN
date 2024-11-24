@@ -15,7 +15,7 @@ from .indicators2 import IndicatorsPanel2
 from .leftbottompanel import LeftBottomPanel
 from .mpr import MPR, MPR2
 from .rpm import RPM, RPM2
-from .stec30alt import STec30Alt
+from .stec30alt import STec30Alt, STec30Alt2
 from .transponder import Transponder, Transponder2
 from .turnroll import TurnRoll, TurnRoll2
 from .vertspeed import VerticalSpeed, VerticalSpeed2
@@ -40,7 +40,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         Heading(sim, can),
         IndicatorsPanel1(sim, can),
         IndicatorsPanel2(sim, can),
-        STec30Alt(sim, can),
+        # STec30Alt(sim, can),
         #   Annunciators(sim, can),
         # low-left panel
         # RPM(sim, can),
@@ -66,6 +66,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         RPM2(sim, can),
         FuelSelector2(sim, can),
         ButtonsPanel2(sim, can),
+        STec30Alt2(sim, can),
     ]
 
 

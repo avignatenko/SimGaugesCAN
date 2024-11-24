@@ -80,10 +80,10 @@ class Device2:
         )
 
     async def create_can_message_subscription(
-        self, can_id, port, msg_type
+        self, can_id, port, msg_type, compare: bool = True
     ) -> canclient.CANMessageSubscription:
         return await canclient.CANMessageSubscription.create(
-            self._can, can_id, port, msg_type
+            self._can, can_id, port, msg_type, compare
         )
 
     async def run(self):

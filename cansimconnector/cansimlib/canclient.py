@@ -21,19 +21,20 @@ class CANMessageSubscription:
         BYTE = 2
         USHORT = 3
 
-    def __init__(self, can_bus, can_id, port, msg_type):
+    def __init__(self, can_bus, can_id, port, msg_type, compare: bool = True):
         self._can = can_bus
         self._id = can_id
         self._port = port
         self._msg_type = msg_type
         self._prev_payload = None
+        self._compare = compare
 
     @classmethod
-    async def create(cls, can_bus, can_id, port, msg_type):
+    async def create(cls, can_bus, can_id, port, msg_type, compare: bool = True):
         """Create can message, including registering subscription"""
         await can_bus.subscribe_message_port_no_callback(can_id, port)
 
-        self = cls(can_bus, can_id, port, msg_type)
+        self = cls(can_bus, can_id, port, msg_type, compare)
         return self
 
     def _is_small_change(self, new_payload):
@@ -44,6 +45,10 @@ class CANMessageSubscription:
         return self._prev_payload == new_payload
 
     async def receive_new_payload(self):
+
+        if not self._compare:
+            return await self._can.wait_message(self._id, self._port)
+
         while True:
             payload = self._can.get_message(self._id, self._port)
             if payload is not None:
