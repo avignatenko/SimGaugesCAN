@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from .. import cansimlib
@@ -39,3 +40,33 @@ class MPR(cansimlib.Device):
 
     async def _set_fuel_flow(self, value: float):
         await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_float(value * 1350))
+
+
+class MPR2(cansimlib.Device2):
+
+    CAN_ID = 22
+
+    async def run_fuel_flow(self):
+        fuel_flow = await self.create_dataref_subscription(
+            "simcoders/rep/indicators/fuel/fuel_flow_0"
+        )
+
+        while True:
+            value = await fuel_flow.receive_new_value()
+            await self._can.send(
+                self.CAN_ID, 1, cansimlib.make_payload_float(value * 1350)
+            )
+
+    async def run_mpr(self):
+        mpr = await self.create_dataref_subscription(
+            "sim/cockpit2/engine/indicators/MPR_in_hg"
+        )
+
+        while True:
+            value = await mpr.receive_new_value()
+            await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))
+
+    async def run(self):
+        async with asyncio.TaskGroup() as tg:
+            tg.create_task(self.run_fuel_flow())
+            tg.create_task(self.run_mpr())
