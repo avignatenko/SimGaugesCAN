@@ -140,7 +140,7 @@ class LeftBottomPane2(cansimlib.Device2):
         super().__init__(sim, can)
         self._value_volts = None
         self._gear_light_on = [None] * 3
-        self._keep_ingition = None
+        self._keep_ingition_task = None
 
     async def _run_volts(self):
         volts = await self.create_dataref_subscription(
@@ -248,15 +248,15 @@ class LeftBottomPane2(cansimlib.Device2):
         while True:
             data = await can_message.receive_new_value()
             if data != 4:
-                if self._keep_ingition is not None:
-                    self._keep_ingition.cancel()
+                if self._keep_ingition_task is not None:
+                    self._keep_ingition_task.cancel()
                 await self._sim.send_dataref(dataref_id, 0, data)
             else:
-                self._keep_ingition = asyncio.create_task(
-                    self._keep_cranking(dataref_id)
+                self._keep_ingition_task = asyncio.create_task(
+                    self._keep_ignition(dataref_id)
                 )
 
-    async def _keep_cranking(self, dataref_id):
+    async def _keep_ignition(self, dataref_id):
         while True:
             await self._sim.send_dataref(dataref_id, 0, 4)
             await asyncio.sleep(0.05)
