@@ -39,7 +39,7 @@ class LedGauge(cansimlib.Device2):
         if led_value is None:
             return
 
-        logger.info(
+        logger.debug(
             "id: %s, port: %s, value: %s", self._canid, self._can_port, led_value
         )
         await self._can.send(

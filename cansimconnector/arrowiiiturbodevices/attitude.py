@@ -52,9 +52,7 @@ class Attitude2(cansimlib.Device2):
 
         while True:
             value = await pitch.receive_new_value()
-            await self._can.send(
-                self.CAN_ID, 0, cansimlib.make_payload_float(-value * 3)
-            )
+            await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))
 
     async def run_roll(self):
         roll = await self.create_dataref_subscription(

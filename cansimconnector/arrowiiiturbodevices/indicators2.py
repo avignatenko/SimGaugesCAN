@@ -88,17 +88,13 @@ class IndicatorsPanel2_2(cansimlib.Device2):
         async with asyncio.TaskGroup() as tg:
             tg.create_task(
                 self.run_indicator_fuel(
-                    "simcoders/rep/indicators/fuel/fuel_quantity_ratio_0",
-                    port=2,
-                    tolerance=0.1,
+                    "simcoders/rep/indicators/fuel/fuel_quantity_ratio_0", port=2
                 )
             )
 
             tg.create_task(
                 self.run_indicator_fuel(
-                    "simcoders/rep/indicators/fuel/fuel_quantity_ratio_1",
-                    port=0,
-                    tolerance=0.1,
+                    "simcoders/rep/indicators/fuel/fuel_quantity_ratio_1", port=0
                 )
             )
 
