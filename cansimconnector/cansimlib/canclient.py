@@ -11,7 +11,7 @@ from . import common
 logger = logging.getLogger(__name__)
 
 
-class CANMessage:
+class CANMessageSubscription:
     """Representation of receving message from CANSim"""
 
     class CANType(enum.Enum):
@@ -19,6 +19,7 @@ class CANMessage:
 
         FLOAT = 1
         BYTE = 2
+        USHORT = 3
 
     def __init__(self, can_bus, can_id, port, msg_type):
         self._can = can_bus
@@ -42,8 +43,7 @@ class CANMessage:
 
         return self._prev_payload == new_payload
 
-    async def get_payload(self):
-        """Return message payload (no waiting), maybe None"""
+    async def receive_new_payload(self):
         while True:
             payload = self._can.get_message(self._id, self._port)
             if payload is not None:
@@ -53,14 +53,16 @@ class CANMessage:
 
             await self._can.wait_message(self._id, self._port)
 
-    async def get_value(self):
+    async def receive_new_value(self):
 
-        payload = await self.get_payload()
+        payload = await self.receive_new_payload()
         match self._msg_type:
             case self.CANType.FLOAT:
                 return common.payload_float(payload)
             case self.CANType.BYTE:
                 return common.payload_byte(payload)
+            case self.CANType.USHORT:
+                return common.payload_ushort(payload)
         return None
 
 

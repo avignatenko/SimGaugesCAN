@@ -15,7 +15,7 @@ class Device:
         self._can = can
 
 
-class Dataref:
+class DatarefSubscription:
     def __init__(self, sim, dt, index: list | None, tolerance=0.01):
         self._dt = dt
         self._index = index
@@ -69,26 +69,25 @@ class Device2:
         self._sim = sim
         self._can = can
 
-    async def create_dataref(
+    async def create_dataref_subscription(
         self, dataref_str, index: list[int] | None = None, tolerance=0.01
     ):
-        return await Dataref.create(
+        return await DatarefSubscription.create(
             self._sim,
             dataref_str,
             index,
             tolerance,
         )
 
-    async def run_sim(self):
-        pass
-
-    async def run_can(self):
-        pass
+    async def create_can_message_subscription(
+        self, can_id, port, msg_type
+    ) -> canclient.CANMessageSubscription:
+        return await canclient.CANMessageSubscription.create(
+            self._can, can_id, port, msg_type
+        )
 
     async def run(self):
-        async with asyncio.TaskGroup() as tg:
-            tg.create_task(self.run_sim())
-            tg.create_task(self.run_can())
+        pass
 
 
 class PhysicalSwitch(Device):

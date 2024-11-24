@@ -31,8 +31,8 @@ class Airspeed2(cansimlib.Device2):
 
     CAN_ID = 16
 
-    async def run_sim(self):
-        airspeed = await self.create_dataref(
+    async def run(self):
+        airspeed = await self.create_dataref_subscription(
             "simcoders/rep/cockpit2/gauges/indicators/airspeed_kts_pilot"
         )
 

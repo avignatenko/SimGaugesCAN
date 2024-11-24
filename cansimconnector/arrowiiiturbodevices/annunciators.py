@@ -15,54 +15,60 @@ class LedGauge(cansimlib.Device2):
         self._index = index
         self._canid = can_id
         self._can_port = can_port
+        self._value_volts = None
+        self._value_dataref = None
 
-    async def run_sim(self):
-        bus_volts = await self.create_dataref(
+    async def run_volts(self):
+        volts = await self.create_dataref_subscription(
             "sim/cockpit2/electrical/bus_volts", index=[0], tolerance=0.1
         )
-        led_dataref = await self.create_dataref(
+        while True:
+            self._value_volts = await volts.receive_new_value()
+            await self._update_device()
+
+    async def run_dataref(self):
+        volts = await self.create_dataref_subscription(
             self._dataref, index=self._index, tolerance=0.1
         )
-
-        # wait both values to arrive
-        async with asyncio.TaskGroup() as tg:
-            tg.create_task(bus_volts.receive_new_value())
-            tg.create_task(led_dataref.receive_new_value())
-
         while True:
-            led_value = self.is_light_on([bus_volts, led_dataref])
-            await self._can.send(
-                self._canid, self._can_port, cansimlib.make_payload_byte(led_value)
-            )
-            # continue if something changed
-            for coro in asyncio.as_completed(
-                [bus_volts.receive_new_value(), led_dataref.receive_new_value()]
-            ):
-                await coro
-                break
+            self._value_dataref = await volts.receive_new_value()
+            await self._update_device()
 
-    def is_light_on(self, datarefs: list):
-        led_dataref = datarefs[1]
-        bus_volts = datarefs[0]
+    async def _update_device(self):
+        led_value = self.is_light_on([self._value_volts, self._value_dataref])
+        if led_value is None:
+            return
 
-        return (
-            led_dataref.get_value()
-            if busvolts.electrics_on(bus_volts.get_value())
-            else 0
+        logger.info(
+            "id: %s, port: %s, value: %s", self._canid, self._can_port, led_value
         )
+        await self._can.send(
+            self._canid, self._can_port, cansimlib.make_payload_byte(led_value)
+        )
+
+    async def run(self):
+        async with asyncio.TaskGroup() as tg:
+            tg.create_task(self.run_volts())
+            tg.create_task(self.run_dataref())
+
+    def is_light_on(self, values: list):
+        led = values[1]
+        volts = values[0]
+        if led is None or volts is None:
+            return None
+
+        return led if busvolts.electrics_on(volts) else 0
 
 
 class LedGaugeMPR(LedGauge):
-    def is_light_on(self, datarefs: list):
-        led_dataref = datarefs[1]
-        bus_volts = datarefs[0]
+    def is_light_on(self, values: list):
+        mpr = values[1]
+        volts = values[0]
 
-        return (
-            1
-            if busvolts.electrics_on(bus_volts.get_value())
-            and led_dataref.get_value() > 41
-            else 0
-        )
+        if mpr is None or volts is None:
+            return None
+
+        return 1 if busvolts.electrics_on(volts) and mpr > 41 else 0
 
 
 class Annunciators2(cansimlib.Device2):
