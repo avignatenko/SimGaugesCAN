@@ -196,6 +196,7 @@ class Heading2(cansimlib.Device2):
                 self._dg_drift_restore_sim_mode_task.cancel()
             self._dg_drift_manual_knob_override_mode = True
             self._dg_drift_current += value
+            self._dg_drift_current %= 360
 
             await self._sim.send_dataref(
                 dg_drift_dataref_id, None, self._dg_drift_current
@@ -227,6 +228,7 @@ class Heading2(cansimlib.Device2):
                 self._ap_bug_restore_sim_mode_task.cancel()
             self._ap_bug_manual_knob_override_mode = True
             self._ap_bug_mag_current += value
+            self._ap_bug_mag_current %= 360
             await self._can.send(
                 self.CAN_ID, 1, cansimlib.make_payload_float(self._ap_bug_mag_current)
             )
