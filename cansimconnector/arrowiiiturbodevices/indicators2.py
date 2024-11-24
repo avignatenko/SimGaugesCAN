@@ -65,21 +65,21 @@ class IndicatorsPanel2_2(cansimlib.Device2):
     CAN_ID = 25
 
     async def run_indicator(self, dataref_str, port, idx=None, tolerance=0.01):
-        value = await self.create_dataref_subscription(
+        dataref = await self.create_dataref_subscription(
             dataref_str, index=idx, tolerance=tolerance
         )
 
         while True:
-            value = await value.receive_new_value()
+            value = await dataref.receive_new_value()
             await self._can.send(self.CAN_ID, port, cansimlib.make_payload_float(value))
 
     async def run_indicator_fuel(self, dataref_str, port, idx=None, tolerance=0.01):
-        value = await self.create_dataref_subscription(
+        dataref = await self.create_dataref_subscription(
             dataref_str, index=idx, tolerance=tolerance
         )
 
         while True:
-            value = await value.receive_new_value()
+            value = await dataref.receive_new_value()
             await self._can.send(
                 self.CAN_ID, port, cansimlib.make_payload_float(value * 40)
             )

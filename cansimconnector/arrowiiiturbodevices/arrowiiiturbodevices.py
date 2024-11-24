@@ -12,7 +12,7 @@ from .gyrosuction import GyroSuction, GyroSuction2
 from .heading import Heading
 from .indicators1 import IndicatorsPanel1, IndicatorsPanel1_2
 from .indicators2 import IndicatorsPanel2, IndicatorsPanel2_2
-from .leftbottompanel import LeftBottomPanel
+from .leftbottompanel import LeftBottomPane2, LeftBottomPanel
 from .mpr import MPR, MPR2
 from .rpm import RPM, RPM2
 from .stec30alt import STec30Alt, STec30Alt2
@@ -45,7 +45,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         # low-left panel
         # RPM(sim, can),
         # MPR(sim, can),
-        LeftBottomPanel(sim, can),
+        # LeftBottomPanel(sim, can),
         # bottom
         # FuelSelector(sim, can),
         # right
@@ -69,6 +69,7 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         STec30Alt2(sim, can),
         IndicatorsPanel1_2(sim, can),
         IndicatorsPanel2_2(sim, can),
+        LeftBottomPane2(sim, can),
     ]
 
 
