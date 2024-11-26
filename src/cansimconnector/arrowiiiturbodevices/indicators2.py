@@ -6,7 +6,7 @@ from cansimconnector import cansimlib
 logger = logging.getLogger(__name__)
 
 
-class IndicatorsPanel2_2(cansimlib.Device2):
+class IndicatorsPanel2(cansimlib.Device2):
     CAN_ID = 25
 
     async def run_indicator(self, dataref_str, port, idx=None, tolerance=0.01):

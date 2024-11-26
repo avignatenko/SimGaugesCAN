@@ -10,8 +10,8 @@ from cansimconnector.arrowiiiturbodevices.buttonspanel import ButtonsPanel2
 from cansimconnector.arrowiiiturbodevices.fuelselector import FuelSelector2
 from cansimconnector.arrowiiiturbodevices.gyrosuction import GyroSuction2
 from cansimconnector.arrowiiiturbodevices.heading import Heading2
-from cansimconnector.arrowiiiturbodevices.indicators1 import IndicatorsPanel1_2
-from cansimconnector.arrowiiiturbodevices.indicators2 import IndicatorsPanel2_2
+from cansimconnector.arrowiiiturbodevices.indicators1 import IndicatorsPanel
+from cansimconnector.arrowiiiturbodevices.indicators2 import IndicatorsPanel2
 from cansimconnector.arrowiiiturbodevices.leftbottompanel import LeftBottomPane2
 from cansimconnector.arrowiiiturbodevices.mpr import MPR2
 from cansimconnector.arrowiiiturbodevices.rpm import RPM2
@@ -42,8 +42,8 @@ class Devices:
             FuelSelector2(sim, can),
             ButtonsPanel2(sim, can),
             STec30Alt2(sim, can),
-            IndicatorsPanel1_2(sim, can),
-            IndicatorsPanel2_2(sim, can),
+            IndicatorsPanel(sim, can),
+            IndicatorsPanel2(sim, can),
             LeftBottomPane2(sim, can),
             Heading2(sim, can),
         ]
