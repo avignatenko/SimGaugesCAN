@@ -30,7 +30,6 @@ class DatarefSubscription:
         return cls(sim, dt, index, tolerance)
 
     def _is_small_change(self, new_value: list):
-
         if not self._prev_value or not self._tolerance:
             return False
 
@@ -69,9 +68,7 @@ class Device2:
         self._sim = sim
         self._can = can
 
-    async def create_dataref_subscription(
-        self, dataref_str, index: list[int] | None = None, tolerance=0.01
-    ):
+    async def create_dataref_subscription(self, dataref_str, index: list[int] | None = None, tolerance=0.01):
         return await DatarefSubscription.create(
             self._sim,
             dataref_str,
@@ -82,9 +79,7 @@ class Device2:
     async def create_can_message_subscription(
         self, can_id, port, msg_type, compare: bool = True
     ) -> canclient.CANMessageSubscription:
-        return await canclient.CANMessageSubscription.create(
-            self._can, can_id, port, msg_type, compare
-        )
+        return await canclient.CANMessageSubscription.create(self._can, can_id, port, msg_type, compare)
 
     async def run(self):
         pass

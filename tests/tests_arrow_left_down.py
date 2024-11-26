@@ -28,13 +28,10 @@ def tearDownModule():
 
 class BaseGaugeTest(unittest.TestCase):
     def send_command_2(self, port, payload):
-        cs.send_command(
-            bus, id_src=1, id_dst=self.gauge_id, priority=0, port=port, payload=payload
-        )
+        cs.send_command(bus, id_src=1, id_dst=self.gauge_id, priority=0, port=port, payload=payload)
 
 
 class ManPressTest(BaseGaugeTest):
-
     gauge_id = 22
 
     def test_man_press(self):
@@ -57,7 +54,6 @@ class ManPressTest(BaseGaugeTest):
 
 
 class RPMTest(BaseGaugeTest):
-
     gauge_id = 21
 
     def test_man_press(self):
@@ -71,7 +67,6 @@ class RPMTest(BaseGaugeTest):
 
 
 class BottomPanelTest(BaseGaugeTest):
-
     gauge_id = 23
 
     def test_gear_lights(self):
@@ -83,15 +78,10 @@ class BottomPanelTest(BaseGaugeTest):
             time.sleep(0.5)
 
     def test_buttons_manual(self):
-
         ports_received = []
         for msg in bus:
             port = cs.port_from_canid(msg.arbitration_id)
-            if (
-                cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
-                and port >= 4
-                and port <= 10
-            ):
+            if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id and port >= 4 and port <= 10:
                 if port not in ports_received:
                     ports_received.append(port)
                 if len(ports_received) == 7:

@@ -37,14 +37,12 @@ class CANMessageSubscription:
         return cls(can_bus, can_id, port, msg_type, compare)
 
     def _is_small_change(self, new_payload):
-
         if not self._prev_payload:
             return False
 
         return self._prev_payload == new_payload
 
     async def receive_new_payload(self):
-
         if not self._compare:
             return await self._can.wait_message(self._id, self._port)
 
@@ -57,7 +55,6 @@ class CANMessageSubscription:
             await self._can.wait_message(self._id, self._port)
 
     async def receive_new_value(self):
-
         payload = await self.receive_new_payload()
         match self._msg_type:
             case self.CANType.FLOAT:
@@ -70,7 +67,6 @@ class CANMessageSubscription:
 
 
 class CANClient:
-
     @dataclass
     class CANMessageData:
         value = None
@@ -143,9 +139,7 @@ class CANClient:
 
             value = self._values.get((src_id, port))
             if value is None:
-                logger.info(
-                    "Received CAN value from %s, %s, but no subscribers", src_id, port
-                )
+                logger.info("Received CAN value from %s, %s, but no subscribers", src_id, port)
                 # continue
             else:
                 value.value = message.data

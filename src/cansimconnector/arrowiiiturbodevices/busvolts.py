@@ -14,7 +14,6 @@ def electrics_on(volts):
 
 
 class BusVolts:
-
     def __init__(self, sim):
         self._sim: cansimlib.XPlaneClient = sim
         self._volts = 0
@@ -40,9 +39,7 @@ class BusVolts:
         if self._volts_ok != new_volts_ok:
             self._volts_ok = new_volts_ok
 
-            asyncio.gather(
-                *(callback(new_volts_ok) for callback in self._callbacks_status)
-            )
+            asyncio.gather(*(callback(new_volts_ok) for callback in self._callbacks_status))
 
     def bus_volts_ok(self):
         return self._volts_ok

@@ -39,7 +39,6 @@ class BaseGaugeTest(unittest.TestCase):
 
 
 class GyroSuctionTests(BaseGaugeTest):
-
     gauge_id = 29
 
     def test_basic(self):
@@ -53,7 +52,6 @@ class GyroSuctionTests(BaseGaugeTest):
 
 
 class AirspeedTests(BaseGaugeTest):
-
     gauge_id = 16
 
     def test_basic(self):
@@ -67,7 +65,6 @@ class AirspeedTests(BaseGaugeTest):
 
 
 class AttIndicatorTests(BaseGaugeTest):
-
     gauge_id = 28
 
     def test_ver(self):
@@ -86,7 +83,6 @@ class AttIndicatorTests(BaseGaugeTest):
 
 
 class AltimeterTests(BaseGaugeTest):
-
     gauge_id = 17
 
     def test_basic(self):
@@ -99,14 +95,12 @@ class AltimeterTests(BaseGaugeTest):
         self.send_command_2(port=0, payload=cs.make_payload_float(0))
 
     def test_knob_manual(self):
-
         for msg in bus:
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
                 break
 
 
 class TurnCoordinatorTests(BaseGaugeTest):
-
     gauge_id = 19
 
     def test_ver(self):
@@ -125,7 +119,6 @@ class TurnCoordinatorTests(BaseGaugeTest):
 
 
 class DirIndicatorTests(BaseGaugeTest):
-
     gauge_id = 20
 
     def test_ver(self):
@@ -143,7 +136,6 @@ class DirIndicatorTests(BaseGaugeTest):
         self.send_command_2(port=1, payload=cs.make_payload_float(0))
 
     def test_knob_manual_0(self):
-
         for msg in bus:
             if (
                 cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
@@ -152,7 +144,6 @@ class DirIndicatorTests(BaseGaugeTest):
                 break
 
     def test_knob_manual_1(self):
-
         for msg in bus:
             if (
                 cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
@@ -162,7 +153,6 @@ class DirIndicatorTests(BaseGaugeTest):
 
 
 class VertSpeedTests(BaseGaugeTest):
-
     gauge_id = 18
 
     def test_basic(self):
@@ -174,7 +164,6 @@ class VertSpeedTests(BaseGaugeTest):
 
 
 class ArrowUpperLedGaugeTests(BaseGaugeTest):
-
     gauge_id = 26
 
     def test_basic(self):
@@ -186,7 +175,6 @@ class ArrowUpperLedGaugeTests(BaseGaugeTest):
             time.sleep(0.5)
 
     def test_buttons_manual_0(self):
-
         for msg in bus:
             if (
                 cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
@@ -197,7 +185,6 @@ class ArrowUpperLedGaugeTests(BaseGaugeTest):
                 break
 
     def test_buttons_manual_1(self):
-
         for msg in bus:
             if (
                 cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
@@ -209,7 +196,6 @@ class ArrowUpperLedGaugeTests(BaseGaugeTest):
 
 
 class Indicators1Tests(BaseGaugeTest):
-
     gauge_id = 27
 
     def test_alt_amp(self):
@@ -242,7 +228,6 @@ class Indicators1Tests(BaseGaugeTest):
 
 
 class Indicators2Tests(BaseGaugeTest):
-
     gauge_id = 25
 
     def test_fuel_1(self):
@@ -268,7 +253,6 @@ class Indicators2Tests(BaseGaugeTest):
 
 
 class STec30Test(BaseGaugeTest):
-
     gauge_id = 32
 
     def test_basic(self):
@@ -289,9 +273,7 @@ class STec30Test(BaseGaugeTest):
 
 
 class MultiDeviceStressTests(unittest.TestCase):
-
     def test_single_arrow_gauges_test(self):
-
         for i in range(150):
             cs.send_command(
                 bus,

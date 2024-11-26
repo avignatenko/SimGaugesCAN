@@ -35,11 +35,9 @@ class BaseGaugeTest(unittest.TestCase):
 
 
 class FuelSelectorTest(BaseGaugeTest):
-
     gauge_id = 30
 
     def test_knob_manual(self):
-
         for msg in bus:
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
                 break

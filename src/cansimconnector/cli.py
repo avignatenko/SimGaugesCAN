@@ -20,7 +20,7 @@ async def connect_sim(config) -> cansimlib.XPlaneClient:
             logger.info("Sim connected")
             break
         except (OSError, TimeoutError) as e:
-            logger.error("Sim connection to %s error: %s, reconnecting", config["simAddr"], e) # noqa: TRY400
+            logger.error("Sim connection to %s error: %s, reconnecting", config["simAddr"], e)  # noqa: TRY400
             await asyncio.sleep(5.0)
             continue
     return sim
@@ -35,7 +35,7 @@ async def connect_can(config) -> cansimlib.CANClient:
             logger.info("CAN connected")
             break
         except Exception as e:
-            logger.error("CAN error: %s, reconnecting", e) # noqa: TRY400
+            logger.error("CAN error: %s, reconnecting", e)  # noqa: TRY400
             # CAN doesnt have connection timeout, so we'll wait here
             await asyncio.sleep(5.0)
             continue
@@ -43,12 +43,9 @@ async def connect_can(config) -> cansimlib.CANClient:
 
 
 async def main_loop() -> None:
-
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
-    asyncio.get_event_loop().slow_callback_duration = (
-        15  # all callbacks should fit into 15ms
-    )
+    asyncio.get_event_loop().slow_callback_duration = 15  # all callbacks should fit into 15ms
 
     logger.info("Reading config")
     config = cansimlib.read_config()
@@ -67,17 +64,16 @@ async def main_loop() -> None:
 
     # subsribe devices
     logger.info("Registering devices")
-    arrowiiiturbodevices.register(sim, can)
-
-    logger.info("Devices init")
-    await arrowiiiturbodevices.init()
+    devices = arrowiiiturbodevices.Devices()
+    devices.arrowiiiturbodevices.register(sim, can)
 
     # run can receiver and websockets receiver async
     logger.info("Starting main loop")
     async with asyncio.TaskGroup() as tg:
-        tg.create_task(arrowiiiturbodevices.run())
+        tg.create_task(devices.run())
         tg.create_task(can.run())
         tg.create_task(sim.run())
+
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="CANSimConnector")

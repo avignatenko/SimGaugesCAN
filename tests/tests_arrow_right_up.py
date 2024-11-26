@@ -35,22 +35,18 @@ class BaseGaugeTest(unittest.TestCase):
 
 
 class FuelSwitchTest(BaseGaugeTest):
-
     gauge_id = 30
 
     def test_fuel_switch_manual(self):
-
         for msg in bus:
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
                 break
 
 
 class ButtonSwitchTest(BaseGaugeTest):
-
     gauge_id = 24
 
     def test_buttons_manual(self):
-
         ports_received = []
         for msg in bus:
             port = cs.port_from_canid(msg.arbitration_id)
@@ -62,34 +58,23 @@ class ButtonSwitchTest(BaseGaugeTest):
 
 
 class TransponderTest(BaseGaugeTest):
-
     gauge_id = 31
 
     def test_buttons_squawk_manual(self):
-
         # enable voltage
         self.send_command_2(port=1, payload=cs.make_payload_byte(12))
 
         for msg in bus:
             port = cs.port_from_canid(msg.arbitration_id)
-            if (
-                cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
-                and port == 1
-                and msg.dlc == 2
-            ):
+            if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id and port == 1 and msg.dlc == 2:
                 squawk = int.from_bytes(msg.data, byteorder="little")
                 if squawk == 6666:
                     break
 
     def test_buttons_selector_manual(self):
-
         for msg in bus:
             port = cs.port_from_canid(msg.arbitration_id)
-            if (
-                cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
-                and port == 0
-                and msg.dlc == 1
-            ):
+            if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id and port == 0 and msg.dlc == 1:
                 break
 
     def test_button(self):
@@ -98,11 +83,7 @@ class TransponderTest(BaseGaugeTest):
 
         for msg in bus:
             port = cs.port_from_canid(msg.arbitration_id)
-            if (
-                cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
-                and port == 2
-                and msg.dlc == 1
-            ):
+            if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id and port == 2 and msg.dlc == 1:
                 break
 
     def test_led(self):

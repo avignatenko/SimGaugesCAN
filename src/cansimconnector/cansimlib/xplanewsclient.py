@@ -14,9 +14,7 @@ logger = logging.getLogger(__name__)
 class XPlaneClient:
     class DatarefData:
         class CallbackData:
-            def __init__(
-                self, callback: Callable, tolerance: float, freq: float, context
-            ):
+            def __init__(self, callback: Callable, tolerance: float, freq: float, context):
                 self.callback = callback
                 self.tolerance = tolerance
                 self.freq = freq
@@ -33,9 +31,7 @@ class XPlaneClient:
         self._httpsession: aiohttp.ClientSession = None
         self._datarefs_storage: dict[int, self.DatarefData] = {}
 
-    async def _process_single_callback_update(
-        self, dataref, callback: DatarefData.CallbackData
-    ):
+    async def _process_single_callback_update(self, dataref, callback: DatarefData.CallbackData):
         # changed enough?
         if callback.last_value and callback.tolerance:
             small_change = True
@@ -49,11 +45,7 @@ class XPlaneClient:
         value2 = dataref.value[0] if len(dataref.value) == 1 else dataref.value
         callback.last_value = dataref.value
 
-        await (
-            callback.callback(value2)
-            if callback.context is None
-            else callback.callback(value2, callback.context)
-        )
+        await (callback.callback(value2) if callback.context is None else callback.callback(value2, callback.context))
 
     # await callback.update_task
 
@@ -82,9 +74,7 @@ class XPlaneClient:
     async def _process_datarefs_update(self, data):
         async with asyncio.TaskGroup() as tg:
             for dataref_id_str, value in data.items():
-                tg.create_task(
-                    self._process_single_dataref_update(int(dataref_id_str), value)
-                )
+                tg.create_task(self._process_single_dataref_update(int(dataref_id_str), value))
 
     async def connect(self, uri):
         try:
@@ -92,9 +82,7 @@ class XPlaneClient:
                 base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=100)
             )
             # no compression, no ping for performance (maybe reconsider)
-            self._wsclient = await connect(
-                f"ws://{uri}/api/v1", compression=None, ping_interval=None
-            )
+            self._wsclient = await connect(f"ws://{uri}/api/v1", compression=None, ping_interval=None)
         except (OSError, TimeoutError):
             if self._httpsession is not None:
                 await self._httpsession.close()
@@ -103,9 +91,7 @@ class XPlaneClient:
             raise
 
     async def get_dataref_id(self, dataref: str) -> int:
-        async with self._httpsession.get(
-            f"/api/v1/datarefs?filter[name]={dataref}"
-        ) as response:
+        async with self._httpsession.get(f"/api/v1/datarefs?filter[name]={dataref}") as response:
             json = await response.json()
             dataref_id = json["data"][0]["id"]
             logger.debug("Dataref %s ID is %s", dataref, dataref_id)
@@ -132,7 +118,6 @@ class XPlaneClient:
     async def _subsribe_and_get_dataref_data(self, dataref_id: int, idx: int | None):
         # subscribed already? (fixme - need to deal with freq)
         if dataref_id not in self._datarefs_storage:
-
             dataref_subscription = {"id": dataref_id}
             if idx is not None:
                 dataref_subscription["index"] = idx
@@ -148,11 +133,8 @@ class XPlaneClient:
 
         return self._datarefs_storage[dataref_id]
 
-
-    async def subscribe_dataref_no_callback(
-        self, dataref: str, freq: float = 10
-    ) -> int:
-        del freq # unused
+    async def subscribe_dataref_no_callback(self, dataref: str, freq: float = 10) -> int:
+        del freq  # unused
 
         dataref_id = await self.get_dataref_id(dataref)
         await self._subsribe_and_get_dataref_data(dataref_id, None)
@@ -170,9 +152,7 @@ class XPlaneClient:
         dataref_id = await self.get_dataref_id(dataref)
         dataref_data = await self._subsribe_and_get_dataref_data(dataref_id, idx)
 
-        callback_data = self.DatarefData.CallbackData(
-            callback, tolerance, freq, context
-        )
+        callback_data = self.DatarefData.CallbackData(callback, tolerance, freq, context)
 
         dataref_data.update_callbacks.append(callback_data)
 
@@ -191,9 +171,7 @@ class XPlaneClient:
                     await self._process_datarefs_update(data_json["data"])
                 case "result":
                     if data_json["success"] is False:
-                        logger.error(
-                            "WS error returned for request %s", data_json["req_id"]
-                        )
+                        logger.error("WS error returned for request %s", data_json["req_id"])
 
     def __del__(self):
         if self._wsclient:
