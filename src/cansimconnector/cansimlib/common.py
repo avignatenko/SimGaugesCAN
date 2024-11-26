@@ -1,4 +1,5 @@
 import json
+import locale
 import os
 import struct
 
@@ -9,11 +10,11 @@ import can
 def make_id(id_src, id_dst, priority, port) -> int:
     msg = 0
     # 4 bits: (25 .. 28) priority (0 .. 15)
-    msg = msg | ((priority & 0b1111) << 25)
+    msg |= (priority & 15) << 25
     # 5 bits: (20 .. 24) port
-    msg = msg | ((port & 0b11111) << 20)
+    msg |= (port & 31) << 20
     # 10 bits (10 .. 19): dst address (0 .. 1023)
-    msg = msg | ((id_dst & 0b1111111111) << 10)
+    msg |= (id_dst & 1023) << 10
     # 10 bits (0 .. 9): src address (0 .. 1023)
     return msg | ((id_src & 0b1111111111) << 0)
 
@@ -60,5 +61,5 @@ def send_command(bus, id_src, id_dst, priority, port, payload):
 
 
 def read_config(folder="."):
-    with open(os.path.join(folder, "config.json")) as file:
+    with open(os.path.join(folder, "config.json"), encoding=locale.getpreferredencoding(False)) as file:
         return json.load(file)

@@ -24,7 +24,7 @@ class LeftBottomPane2(cansimlib.Device2):
             await self._update_gear_leds()
 
     async def _update_gear_leds(self):
-        if None in [*self._gear_light_on, self._value_volts]:
+        if None in {*self._gear_light_on, self._value_volts}:
             return
 
         await self._can.send(

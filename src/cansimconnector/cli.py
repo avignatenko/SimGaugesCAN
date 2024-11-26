@@ -7,6 +7,12 @@ import click
 from cansimconnector import arrowiiiturbodevices, cansimlib
 from cansimconnector.__about__ import __version__
 
+if sys.platform in {"win32", "cygwin", "cli"}:
+    from winloop import run  # type: ignore
+else:
+    # if we're on apple or linux do this instead
+    from uvloop import run  # type: ignore
+
 logger = logging.getLogger(__name__)
 
 
@@ -78,10 +84,6 @@ async def main_loop() -> None:
 @click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="CANSimConnector")
 def cansimconnector():
-    if sys.platform in ("win32", "cygwin", "cli"):
-        from winloop import run  # type: ignore
-    else:
-        # if we're on apple or linux do this instead
-        from uvloop import run  # type: ignore
+
 
     run(main_loop(), debug=True)
