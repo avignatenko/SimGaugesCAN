@@ -1,7 +1,4 @@
-# Hatch Demo
-
-[![PyPI - Version](https://img.shields.io/pypi/v/hatch-demo.svg)](https://pypi.org/project/hatch-demo)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/hatch-demo.svg)](https://pypi.org/project/hatch-demo)
+# CANSimConnector Demo
 
 -----
 
@@ -13,9 +10,9 @@
 ## Installation
 
 ```console
-pip install hatch-demo
+pip install cansimconnector
 ```
 
 ## License
 
-`hatch-demo` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`CANSimConnector` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
