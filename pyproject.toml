@@ -9,7 +9,15 @@ description = "Interface betweeen CANSim and X-Plane/FS"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
-dependencies = ["click", "aiohttp", "pyserial", "python-can", "websockets", "uvloop"]
+dependencies = [
+  "click", 
+  "aiohttp", 
+  "pyserial", 
+  "python-can", 
+  "websockets", 
+  'uvloop ; platform_system != "Windows"',
+  'winloop ; platform_system == "Windows"',]
+
 dynamic = ["version"]
 
 [project.optional-dependencies]
