@@ -20,7 +20,7 @@ async def connect_sim(config) -> cansimlib.XPlaneClient:
             logger.info("Sim connected")
             break
         except (OSError, TimeoutError) as e:
-            logger.error("Sim connection error: %s, reconnecting", e)
+            logger.error("Sim connection to %s error: %s, reconnecting", config["simAddr"], e)
             await asyncio.sleep(5.0)
             continue
     return sim
@@ -81,7 +81,7 @@ async def main_loop() -> None:
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="CANSimConnector")
-def main():
+def cinsimconnector():
     if sys.platform in ("win32", "cygwin", "cli"):
         from winloop import run
     else:
@@ -89,7 +89,3 @@ def main():
         from uvloop import run
 
     run(main_loop(), debug=True)
-
-
-if __name__ == "__main__":
-    main()
