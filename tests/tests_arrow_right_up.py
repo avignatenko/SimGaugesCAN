@@ -42,7 +42,6 @@ class FuelSwitchTest(BaseGaugeTest):
 
         for msg in bus:
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
-                print(msg.data)
                 break
 
 
@@ -56,11 +55,8 @@ class ButtonSwitchTest(BaseGaugeTest):
         for msg in bus:
             port = cs.port_from_canid(msg.arbitration_id)
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
-                print(port)
-                print(msg.data)
                 if port not in ports_received:
                     ports_received.append(port)
-                    print(f"Total: {len(ports_received)}")
                 if len(ports_received) == 7:
                     break
 
@@ -81,7 +77,6 @@ class TransponderTest(BaseGaugeTest):
                 and port == 1
                 and msg.dlc == 2
             ):
-                print(msg.data)
                 squawk = int.from_bytes(msg.data, byteorder="little")
                 if squawk == 6666:
                     break
@@ -95,7 +90,6 @@ class TransponderTest(BaseGaugeTest):
                 and port == 0
                 and msg.dlc == 1
             ):
-                print(msg.data)
                 break
 
     def test_button(self):
@@ -109,7 +103,6 @@ class TransponderTest(BaseGaugeTest):
                 and port == 2
                 and msg.dlc == 1
             ):
-                print(msg.data)
                 break
 
     def test_led(self):

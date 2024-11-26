@@ -42,7 +42,6 @@ class FuelSelectorTest(BaseGaugeTest):
 
         for msg in bus:
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
-                print(msg.data)
                 break
 
 

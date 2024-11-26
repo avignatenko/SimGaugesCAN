@@ -92,11 +92,8 @@ class BottomPanelTest(BaseGaugeTest):
                 and port >= 4
                 and port <= 10
             ):
-                print(port)
-                print(msg.data)
                 if port not in ports_received:
                     ports_received.append(port)
-                    print(f"Total: {len(ports_received)}")
                 if len(ports_received) == 7:
                     break
 

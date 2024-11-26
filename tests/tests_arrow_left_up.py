@@ -102,7 +102,6 @@ class AltimeterTests(BaseGaugeTest):
 
         for msg in bus:
             if cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id:
-                print(msg.data)
                 break
 
 
@@ -150,7 +149,6 @@ class DirIndicatorTests(BaseGaugeTest):
                 cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
                 and cs.port_from_canid(msg.arbitration_id) == 0
             ):
-                print(msg.data)
                 break
 
     def test_knob_manual_1(self):
@@ -160,7 +158,6 @@ class DirIndicatorTests(BaseGaugeTest):
                 cs.src_id_from_canid(msg.arbitration_id) == self.gauge_id
                 and cs.port_from_canid(msg.arbitration_id) == 1
             ):
-                print(msg.data)
                 break
 
 
@@ -197,7 +194,6 @@ class ArrowUpperLedGaugeTests(BaseGaugeTest):
                 and msg.dlc == 1
                 and cs.payload_byte(msg.data) == 1
             ):
-                print(msg.data)
                 break
 
     def test_buttons_manual_1(self):
@@ -209,7 +205,6 @@ class ArrowUpperLedGaugeTests(BaseGaugeTest):
                 and msg.dlc == 1
                 and cs.payload_byte(msg.data) == 1
             ):
-                print(msg.data)
                 break
 
 
@@ -290,7 +285,6 @@ class STec30Test(BaseGaugeTest):
                 and msg.dlc == 1
                 and cs.payload_byte(msg.data) == 1
             ):
-                print(msg.data)
                 break
 
 
