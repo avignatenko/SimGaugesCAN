@@ -2,7 +2,10 @@ import asyncio
 import logging
 import sys
 
+import click
+
 from . import arrowiiiturbodevices, cansimlib
+from .__about__ import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +79,8 @@ async def main_loop() -> None:
         tg.create_task(can.run())
         tg.create_task(sim.run())
 
-
+@click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
+@click.version_option(version=__version__, prog_name="CANSimConnector")
 def main():
     if sys.platform in ("win32", "cygwin", "cli"):
         from winloop import run

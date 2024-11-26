@@ -62,6 +62,6 @@ def send_command(bus, id_src, id_dst, priority, port, payload):
 
 
 def read_config(folder="."):
-    with open(os.path.join(folder, "config.json"), "r") as file:
+    with open(os.path.join(folder, "config.json")) as file:
         data = json.load(file)
         return data

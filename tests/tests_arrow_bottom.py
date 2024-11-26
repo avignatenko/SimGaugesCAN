@@ -1,6 +1,5 @@
 # viewer python -m can.viewer -i slcan -b 1000000 -c '/dev/tty.usbmodem1101@4000000'
 
-import time
 import unittest
 
 import can

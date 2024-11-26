@@ -1,39 +1,50 @@
 [build-system]
-requires = ["setuptools"]               # REQUIRED if [build-system] table is used
-build-backend = "setuptools.build_meta" # If not defined, then legacy behavior can happen.
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 
 [project]
 name = "cansimconnector"
-version = "0.0.1"
+description = "Interface betweeen CANSim and X-Plane/FS"
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.9"
+dependencies = ["click", "aiohttp", "pyserial", "python-can", "websockets", "uvloop"]
+dynamic = ["version"]
 
-# For an analysis of this field vs pip's requirements files see:
-# https://packaging.python.org/discussions/install-requires-vs-requirements/
-dependencies = ["aiohttp", "pyserial", "python-can", "websockets", "winloop"]
-
-# List additional groups of dependencies here (e.g. development
-# dependencies). Users will be able to install these using the "extras"
-# syntax, for example:
-#
-#   $ pip install sampleproject[dev]
-#
-# Optional dependencies the project provides. These are commonly
-# referred to as "extras". For a more extensive definition see:
-# https://packaging.python.org/en/latest/specifications/dependency-specifiers/#extras
 [project.optional-dependencies]
 dev = ["pyinstaller"]
 test = ["coverage"]
 
-# The following would provide a command line executable called `sample`
-# which executes the function `main` from this package when invoked.
-#[project.scripts]
-#sample = "sample:main"
+[project.scripts]
+cansimconnector = "cansimconnector:cansimconnector"
 
+[tool.hatch.version]
+path = "src/cansimconnector/__about__.py"
 
-# This is configuration specific to the `setuptools` build backend.
-# If you are using a different build backend, you will need to change this.
-[tool.setuptools]
-# If there are data files included in your packages that need to be
-# installed, specify them here.
-#package-data = { "sample" = ["*.dat"] }
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/cansimconnector tests}"
+
+[tool.coverage.run]
+source_pkgs = ["cansimconnector", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/hatch_demo/__about__.py",
+]
+
+[tool.coverage.paths]
+hatch_demo = ["src/cansimconnector", "*/cansimconnector/src/cansimconnector"]
+tests = ["tests", "*/cansimconnector/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]

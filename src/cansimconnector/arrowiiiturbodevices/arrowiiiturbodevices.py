@@ -2,23 +2,23 @@ import asyncio
 import logging
 
 from .. import cansimlib
-from .airspeed import Airspeed, Airspeed2
-from .altitude import Altitude, Altitude2
-from .annunciators import Annunciators, Annunciators2
-from .attitude import Attitude, Attitude2
-from .buttonspanel import ButtonsPanel, ButtonsPanel2
-from .fuelselector import FuelSelector, FuelSelector2
-from .gyrosuction import GyroSuction, GyroSuction2
-from .heading import Heading, Heading2
-from .indicators1 import IndicatorsPanel1, IndicatorsPanel1_2
-from .indicators2 import IndicatorsPanel2, IndicatorsPanel2_2
-from .leftbottompanel import LeftBottomPane2, LeftBottomPanel
-from .mpr import MPR, MPR2
-from .rpm import RPM, RPM2
-from .stec30alt import STec30Alt, STec30Alt2
-from .transponder import Transponder, Transponder2
-from .turnroll import TurnRoll, TurnRoll2
-from .vertspeed import VerticalSpeed, VerticalSpeed2
+from .airspeed import Airspeed2
+from .altitude import Altitude2
+from .annunciators import Annunciators2
+from .attitude import Attitude2
+from .buttonspanel import ButtonsPanel2
+from .fuelselector import FuelSelector2
+from .gyrosuction import GyroSuction2
+from .heading import Heading2
+from .indicators1 import IndicatorsPanel1_2
+from .indicators2 import IndicatorsPanel2_2
+from .leftbottompanel import LeftBottomPane2
+from .mpr import MPR2
+from .rpm import RPM2
+from .stec30alt import STec30Alt2
+from .transponder import Transponder2
+from .turnroll import TurnRoll2
+from .vertspeed import VerticalSpeed2
 
 logger = logging.getLogger(__name__)
 _devices = []

@@ -1,6 +1,4 @@
-import asyncio
 import logging
-import time
 
 from .. import cansimlib
 
