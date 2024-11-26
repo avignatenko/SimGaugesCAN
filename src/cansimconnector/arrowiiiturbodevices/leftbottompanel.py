@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from .. import cansimlib
-from . import busvolts
+from cansimconnector import cansimlib
+from cansimconnector.arrowiiiturbodevices import busvolts
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 class LeftBottomPanel(cansimlib.Device):
 
     CAN_ID = 23
+    IGNITION_ON_VALUE = 4
 
     async def init(self):
 
@@ -73,19 +74,16 @@ class LeftBottomPanel(cansimlib.Device):
         await self._update_gear_leds()
 
     async def _on_gear_deploy(self, value):
-        self._gear_light_on[0] = value[0] > 0.99
-        self._gear_light_on[1] = value[1] > 0.99
-        self._gear_light_on[2] = value[2] > 0.99
+        self._gear_light_on[0] = value[0] > 0.99 # noqa: PLR2004
+        self._gear_light_on[1] = value[1] > 0.99 # noqa: PLR2004
+        self._gear_light_on[2] = value[2] > 0.99 # noqa: PLR2004
         await self._update_gear_leds()
 
     async def _on_can_event(self, port, payload):
         match port:
             case 8:  # ap rotator
                 data = cansimlib.payload_float(payload)
-                if data < 440:
-                    roll_value = (data - 440) / (0 + 440) * 35
-                else:
-                    roll_value = (data - 440) / (1024 - 440) * 35
+                roll_value = (data - 440) / (0 + 440) * 35 if data < 440 else (data - 440) / (1024 - 440) * 35  # noqa: PLR2004
 
                 await self._sim.send_dataref(
                     self._roll_knob_dataref_id, None, roll_value
@@ -121,20 +119,21 @@ class LeftBottomPanel(cansimlib.Device):
                     self._task_cranking.cancel()
                     self._task_cranking = None
 
-                if data != 4:
+                if data != self.IGNITION_ON_VALUE:
                     await self._sim.send_dataref(self._ignition_key_dataref_id, 0, data)
                 else:
                     self._task_cranking = asyncio.create_task(self.keep_cranking())
 
     async def keep_cranking(self):
         while True:
-            await self._sim.send_dataref(self._ignition_key_dataref_id, 0, 4)
+            await self._sim.send_dataref(self._ignition_key_dataref_id, 0, self.IGNITION_ON_VALUE)
             await asyncio.sleep(0.05)
 
 
 class LeftBottomPane2(cansimlib.Device2):
 
     CAN_ID = 23
+    IGNITION_ON_VALUE = 4
 
     def __init__(self, sim, can):
         super().__init__(sim, can)
@@ -185,9 +184,9 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             value = await gear_deploy_status.receive_new_value()
-            self._gear_light_on[0] = value[0] > 0.99
-            self._gear_light_on[1] = value[1] > 0.99
-            self._gear_light_on[2] = value[2] > 0.99
+            self._gear_light_on[0] = value[0] > 0.99 # noqa: PLR2004
+            self._gear_light_on[1] = value[1] > 0.99 # noqa: PLR2004
+            self._gear_light_on[2] = value[2] > 0.99 # noqa: PLR2004
             await self._update_gear_leds()
 
     async def _run_ap_rotator(self):
@@ -198,10 +197,7 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             data = await can_message.receive_new_value()
-            if data < 440:
-                roll_value = (data - 440) / (0 + 440) * 35
-            else:
-                roll_value = (data - 440) / (1024 - 440) * 35
+            roll_value = (data - 440) / (0 + 440) * 35 if data < 440 else (data - 440) / (1024 - 440) * 35 #noqa:  PLR2004
 
             await self._sim.send_dataref(dataref_id, None, roll_value)
 
@@ -247,7 +243,7 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             data = await can_message.receive_new_value()
-            if data != 4:
+            if data != self.IGNITION_ON_VALUE:
                 if self._keep_ingition_task is not None:
                     self._keep_ingition_task.cancel()
                 await self._sim.send_dataref(dataref_id, 0, data)
@@ -258,7 +254,7 @@ class LeftBottomPane2(cansimlib.Device2):
 
     async def _keep_ignition(self, dataref_id):
         while True:
-            await self._sim.send_dataref(dataref_id, 0, 4)
+            await self._sim.send_dataref(dataref_id, 0, self.IGNITION_ON_VALUE)
             await asyncio.sleep(0.05)
 
     async def run(self):

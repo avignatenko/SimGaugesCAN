@@ -1,6 +1,6 @@
 import logging
 
-from .. import cansimlib
+from cansimconnector import cansimlib
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class STec30Alt2(cansimlib.Device2):
         )
 
         while True:
-            value = await can_message.receive_new_value()
+            await can_message.receive_new_value()
             # test actions
             self._on = not self._on
             await self._can.send(

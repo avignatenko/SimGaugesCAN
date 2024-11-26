@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from .. import cansimlib
-from . import busvolts
+from cansimconnector import cansimlib
+from cansimconnector.arrowiiiturbodevices import busvolts
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 class Transponder2(cansimlib.Device2):
 
     CAN_ID = 31
+    LED_VALUE_ON = 0.3
 
     async def run_volts(self):
         volts = await self.create_dataref_subscription(
@@ -51,7 +52,7 @@ class Transponder2(cansimlib.Device2):
         )
 
         while True:
-            ident = await ident_message.receive_new_value()
+            await ident_message.receive_new_value()
 
     async def run_transponder_brightness(self):
 
@@ -77,6 +78,7 @@ class Transponder2(cansimlib.Device2):
 class Transponder(cansimlib.Device):
 
     CAN_ID = 31
+    LED_VALUE_ON = 0.3
 
     async def init(self):
 
@@ -113,6 +115,7 @@ class Transponder(cansimlib.Device):
         )
 
     async def _on_transponder_code(self, port, payload):
+        del port # unused
 
         squawk = cansimlib.payload_ushort(payload)
         await self._sim.send_dataref(self._transponder_code_dataref_id, None, squawk)
@@ -128,7 +131,8 @@ class Transponder(cansimlib.Device):
         pass
 
     async def _on_transponder_brightness(self, value):
-        await self._set_transponder_light(1 if value > 0.3 else 0)
+
+        await self._set_transponder_light(1 if value > self.LED_VALUE_ON else 0)
 
     async def _set_transponder_light(self, value: int):
         await self._can.send(self.CAN_ID, 2, cansimlib.make_payload_byte(value))

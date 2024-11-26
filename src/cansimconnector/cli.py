@@ -4,8 +4,8 @@ import sys
 
 import click
 
-from . import arrowiiiturbodevices, cansimlib
-from .__about__ import __version__
+from cansimconnector import arrowiiiturbodevices, cansimlib
+from cansimconnector.__about__ import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ async def connect_sim(config) -> cansimlib.XPlaneClient:
             logger.info("Sim connected")
             break
         except (OSError, TimeoutError) as e:
-            logger.error("Sim connection to %s error: %s, reconnecting", config["simAddr"], e)
+            logger.error("Sim connection to %s error: %s, reconnecting", config["simAddr"], e) # noqa: TRY400
             await asyncio.sleep(5.0)
             continue
     return sim
@@ -35,7 +35,7 @@ async def connect_can(config) -> cansimlib.CANClient:
             logger.info("CAN connected")
             break
         except Exception as e:
-            logger.error("CAN error: %s, reconnecting", e)
+            logger.error("CAN error: %s, reconnecting", e) # noqa: TRY400
             # CAN doesnt have connection timeout, so we'll wait here
             await asyncio.sleep(5.0)
             continue
@@ -81,11 +81,11 @@ async def main_loop() -> None:
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="CANSimConnector")
-def cinsimconnector():
+def cansimconnector():
     if sys.platform in ("win32", "cygwin", "cli"):
-        from winloop import run
+        from winloop import run  # type: ignore
     else:
         # if we're on apple or linux do this instead
-        from uvloop import run
+        from uvloop import run  # type: ignore
 
     run(main_loop(), debug=True)

@@ -15,8 +15,7 @@ def make_id(id_src, id_dst, priority, port) -> int:
     # 10 bits (10 .. 19): dst address (0 .. 1023)
     msg = msg | ((id_dst & 0b1111111111) << 10)
     # 10 bits (0 .. 9): src address (0 .. 1023)
-    msg = msg | ((id_src & 0b1111111111) << 0)
-    return msg
+    return msg | ((id_src & 0b1111111111) << 0)
 
 
 def src_id_from_canid(canid: int) -> int:
@@ -48,12 +47,11 @@ def make_payload_byte(num: int) -> list:
 
 
 def make_message(id_src, id_dst, priority, port, payload):
-    msg = can.Message(
+    return can.Message(
         arbitration_id=make_id(id_src, id_dst, priority, port),
         data=payload,
         is_extended_id=True,
     )
-    return msg
 
 
 def send_command(bus, id_src, id_dst, priority, port, payload):
@@ -63,5 +61,4 @@ def send_command(bus, id_src, id_dst, priority, port, payload):
 
 def read_config(folder="."):
     with open(os.path.join(folder, "config.json")) as file:
-        data = json.load(file)
-        return data
+        return json.load(file)

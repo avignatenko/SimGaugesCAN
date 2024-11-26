@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from .. import cansimlib
+from cansimconnector import cansimlib
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class IndicatorsPanel2(cansimlib.Device):
         self._devices = [fuel_quantity_0, fuel_quantity_1, fuel_press]
 
     async def init(self):
-        asyncio.gather(*map(lambda obj: obj.init(), self._devices))
+        asyncio.gather(*(obj.init() for obj in self._devices))
 
 
 class IndicatorsPanel2_2(cansimlib.Device2):

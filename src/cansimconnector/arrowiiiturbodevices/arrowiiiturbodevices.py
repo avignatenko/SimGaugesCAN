@@ -1,24 +1,24 @@
 import asyncio
 import logging
 
-from .. import cansimlib
-from .airspeed import Airspeed2
-from .altitude import Altitude2
-from .annunciators import Annunciators2
-from .attitude import Attitude2
-from .buttonspanel import ButtonsPanel2
-from .fuelselector import FuelSelector2
-from .gyrosuction import GyroSuction2
-from .heading import Heading2
-from .indicators1 import IndicatorsPanel1_2
-from .indicators2 import IndicatorsPanel2_2
-from .leftbottompanel import LeftBottomPane2
-from .mpr import MPR2
-from .rpm import RPM2
-from .stec30alt import STec30Alt2
-from .transponder import Transponder2
-from .turnroll import TurnRoll2
-from .vertspeed import VerticalSpeed2
+from cansimconnector import cansimlib
+from cansimconnector.arrowiiiturbodevices.airspeed import Airspeed2
+from cansimconnector.arrowiiiturbodevices.altitude import Altitude2
+from cansimconnector.arrowiiiturbodevices.annunciators import Annunciators2
+from cansimconnector.arrowiiiturbodevices.attitude import Attitude2
+from cansimconnector.arrowiiiturbodevices.buttonspanel import ButtonsPanel2
+from cansimconnector.arrowiiiturbodevices.fuelselector import FuelSelector2
+from cansimconnector.arrowiiiturbodevices.gyrosuction import GyroSuction2
+from cansimconnector.arrowiiiturbodevices.heading import Heading2
+from cansimconnector.arrowiiiturbodevices.indicators1 import IndicatorsPanel1_2
+from cansimconnector.arrowiiiturbodevices.indicators2 import IndicatorsPanel2_2
+from cansimconnector.arrowiiiturbodevices.leftbottompanel import LeftBottomPane2
+from cansimconnector.arrowiiiturbodevices.mpr import MPR2
+from cansimconnector.arrowiiiturbodevices.rpm import RPM2
+from cansimconnector.arrowiiiturbodevices.stec30alt import STec30Alt2
+from cansimconnector.arrowiiiturbodevices.transponder import Transponder2
+from cansimconnector.arrowiiiturbodevices.turnroll import TurnRoll2
+from cansimconnector.arrowiiiturbodevices.vertspeed import VerticalSpeed2
 
 logger = logging.getLogger(__name__)
 _devices = []
@@ -75,8 +75,8 @@ def register(sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
 
 
 async def init():
-    asyncio.gather(*map(lambda obj: obj.init(), _devices))
+    asyncio.gather(*(obj.init() for obj in _devices))
 
 
 async def run():
-    asyncio.gather(*map(lambda obj: obj.run(), _devices_2))
+    asyncio.gather(*(obj.run() for obj in _devices_2))

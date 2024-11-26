@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -105,9 +107,9 @@ class XPlaneClient:
             f"/api/v1/datarefs?filter[name]={dataref}"
         ) as response:
             json = await response.json()
-            id = json["data"][0]["id"]
-            logger.debug("Dataref %s ID is %s", dataref, id)
-            return id
+            dataref_id = json["data"][0]["id"]
+            logger.debug("Dataref %s ID is %s", dataref, dataref_id)
+            return dataref_id
 
     async def send_dataref(self, dataref_id: int, index, dataref_value) -> None:
         dataref_value = {"id": dataref_id, "value": dataref_value}
@@ -144,13 +146,14 @@ class XPlaneClient:
 
             self._datarefs_storage[dataref_id] = self.DatarefData()
 
-        dataref_data = self._datarefs_storage[dataref_id]
+        return self._datarefs_storage[dataref_id]
 
-        return dataref_data
 
     async def subscribe_dataref_no_callback(
         self, dataref: str, freq: float = 10
     ) -> int:
+        del freq # unused
+
         dataref_id = await self.get_dataref_id(dataref)
         await self._subsribe_and_get_dataref_data(dataref_id, None)
         return dataref_id

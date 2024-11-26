@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from .. import cansimlib
+from cansimconnector import cansimlib
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class ButtonsPanel(cansimlib.Device):
         ]
 
     async def init(self):
-        asyncio.gather(*map(lambda obj: obj.init(), self._devices))
+        asyncio.gather(*(obj.init() for obj in self._devices))
 
 
 class ButtonsPanel2(cansimlib.Device2):

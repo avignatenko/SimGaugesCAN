@@ -6,7 +6,7 @@ from typing import Callable
 
 import can
 
-from . import common
+from cansimconnector.cansimlib import common
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +34,7 @@ class CANMessageSubscription:
         """Create can message, including registering subscription"""
         await can_bus.subscribe_message_port_no_callback(can_id, port)
 
-        self = cls(can_bus, can_id, port, msg_type, compare)
-        return self
+        return cls(can_bus, can_id, port, msg_type, compare)
 
     def _is_small_change(self, new_payload):
 
@@ -51,10 +50,9 @@ class CANMessageSubscription:
 
         while True:
             payload = self._can.get_message(self._id, self._port)
-            if payload is not None:
-                if not self._is_small_change(payload):
-                    self._prev_payload = payload
-                    return payload
+            if payload is not None and not self._is_small_change(payload):
+                self._prev_payload = payload
+                return payload
 
             await self._can.wait_message(self._id, self._port)
 

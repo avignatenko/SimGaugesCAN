@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from .. import cansimlib
-from . import busvolts
+from cansimconnector import cansimlib
+from cansimconnector.arrowiiiturbodevices import busvolts
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +61,9 @@ class LedGauge(cansimlib.Device2):
 
 
 class LedGaugeMPR(LedGauge):
+
+    MAX_MPR = 41
+
     def is_light_on(self, values: list):
         mpr = values[1]
         volts = values[0]
@@ -68,7 +71,7 @@ class LedGaugeMPR(LedGauge):
         if mpr is None or volts is None:
             return None
 
-        return 1 if busvolts.electrics_on(volts) and mpr > 41 else 0
+        return 1 if busvolts.electrics_on(volts) and mpr > self.MAX_MPR else 0
 
 
 class Annunciators2(cansimlib.Device2):
@@ -137,6 +140,7 @@ class Annunciators2(cansimlib.Device2):
 
 class Annunciators(cansimlib.Device):
     CAN_ID = 26
+    MAX_MPR = 41
 
     def __init__(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
         super().__init__(sim, can)
@@ -157,7 +161,7 @@ class Annunciators(cansimlib.Device):
             dataref_to_value=lambda value, volts: (
                 value if busvolts.electrics_on(volts) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         starter_working = cansimlib.SingleValueIndicator(
@@ -176,7 +180,7 @@ class Annunciators(cansimlib.Device):
             dataref_to_value=lambda value, volts: (
                 value if busvolts.electrics_on(volts) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         low_vacuum = cansimlib.SingleValueIndicator(
@@ -195,7 +199,7 @@ class Annunciators(cansimlib.Device):
             dataref_to_value=lambda value, volts: (
                 value if busvolts.electrics_on(volts) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         generator = cansimlib.SingleValueIndicator(
@@ -214,7 +218,7 @@ class Annunciators(cansimlib.Device):
             dataref_to_value=lambda value, volts: (
                 value if busvolts.electrics_on(volts) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         oid_pressure = cansimlib.SingleValueIndicator(
@@ -233,7 +237,7 @@ class Annunciators(cansimlib.Device):
             dataref_to_value=lambda value, volts: (
                 value if busvolts.electrics_on(volts) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         low_voltage = cansimlib.SingleValueIndicator(
@@ -252,7 +256,7 @@ class Annunciators(cansimlib.Device):
             dataref_to_value=lambda value, volts: (
                 value if busvolts.electrics_on(volts) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         mpr = cansimlib.SingleValueIndicator(
@@ -269,9 +273,9 @@ class Annunciators(cansimlib.Device):
                 busvolts.bus_volts_subscription,
             ],
             dataref_to_value=lambda value, volts: (
-                1 if (busvolts.electrics_on(volts) and value > 41) else 0
+                1 if (busvolts.electrics_on(volts) and value > self.MAX_MPR) else 0
             ),
-            type=cansimlib.SingleValueIndicator.CANType.BYTE,
+            can_type=cansimlib.SingleValueIndicator.CANType.BYTE,
         )
 
         self._devices = [
@@ -285,4 +289,4 @@ class Annunciators(cansimlib.Device):
         ]
 
     async def init(self):
-        asyncio.gather(*map(lambda obj: obj.init(), self._devices))
+        asyncio.gather(*(obj.init() for obj in self._devices))

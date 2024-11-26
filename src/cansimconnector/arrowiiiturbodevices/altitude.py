@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from .. import cansimlib
+from cansimconnector import cansimlib
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,7 @@ class Altitude(cansimlib.Device):
         await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(-value))
 
     async def _on_pressure_knob_rotated(self, port, payload):
+        del port # unused
         value = cansimlib.payload_float(payload)
         await self._sim.send_dataref(self._bar_in_hg_dataref_id, None, value)
 

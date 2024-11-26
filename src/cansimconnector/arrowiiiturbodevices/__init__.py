@@ -1,1 +1,1 @@
-from .arrowiiiturbodevices import *
+from cansimconnector.arrowiiiturbodevices.arrowiiiturbodevices import *

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import enum
 import logging
 from dataclasses import dataclass
 from typing import Callable
 
-from . import canclient, common, xplanewsclient
+from cansimconnector.cansimlib import canclient, common, xplanewsclient
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +27,7 @@ class DatarefSubscription:
     @classmethod
     async def create(cls, sim, dataref_str, index: list | None, tolerance=0.01):
         dt = await sim.subscribe_dataref_no_callback(dataref_str)
-        self = cls(sim, dt, index, tolerance)
-        return self
+        return cls(sim, dt, index, tolerance)
 
     def _is_small_change(self, new_value: list):
 
@@ -140,7 +141,7 @@ class SingleValueIndicator(Device):
         port: int,
         datarefs: list[DatarefSubsription],
         dataref_to_value: Callable = lambda value: value,
-        type: CANType = CANType.FLOAT,
+        can_type: CANType = CANType.FLOAT,
     ):
         super().__init__(sim, can)
 
@@ -150,7 +151,7 @@ class SingleValueIndicator(Device):
         self._port = port
         self._dataref_subscription = datarefs
 
-        match type:
+        match can_type:
             case SingleValueIndicator.CANType.FLOAT:
                 self._set_value_func = self._set_value_float
             case SingleValueIndicator.CANType.BYTE:
