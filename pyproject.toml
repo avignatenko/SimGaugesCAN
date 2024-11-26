@@ -57,8 +57,3 @@ exclude_lines = [
   "if TYPE_CHECKING:",
 ]
 
-[tool.ruff.format]
-preview = true
-
-[tool.ruff.lint]
-preview = true
