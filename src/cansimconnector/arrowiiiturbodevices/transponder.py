@@ -51,7 +51,7 @@ class Transponder2(cansimlib.Device2):
 
         while True:
             value = await brightness.receive_new_value()
-            await self._can.send(self.CAN_ID, 2, cansimlib.make_payload_byte(1 if value > 0.3 else 0))
+            await self._can.send(self.CAN_ID, 2, cansimlib.make_payload_byte(1 if value > self.LED_VALUE_ON else 0))
 
     async def run(self):
         async with asyncio.TaskGroup() as tg:

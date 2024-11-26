@@ -1,1 +1,2 @@
-from cansimconnector.arrowiiiturbodevices.arrowiiiturbodevices import *
+
+from cansimconnector.arrowiiiturbodevices.arrowiiiturbodevices import Devices as Devices

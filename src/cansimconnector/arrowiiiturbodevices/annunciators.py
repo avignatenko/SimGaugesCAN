@@ -42,7 +42,8 @@ class LedGauge(cansimlib.Device2):
             tg.create_task(self.run_volts())
             tg.create_task(self.run_dataref())
 
-    def is_light_on(self, values: list):
+    @staticmethod
+    def is_light_on(values: list):
         led = values[1]
         volts = values[0]
         if led is None or volts is None:
@@ -54,14 +55,15 @@ class LedGauge(cansimlib.Device2):
 class LedGaugeMPR(LedGauge):
     MAX_MPR = 41
 
-    def is_light_on(self, values: list):
+    @staticmethod
+    def is_light_on(values: list):
         mpr = values[1]
         volts = values[0]
 
         if mpr is None or volts is None:
             return None
 
-        return 1 if busvolts.electrics_on(volts) and mpr > self.MAX_MPR else 0
+        return 1 if busvolts.electrics_on(volts) and mpr > LedGaugeMPR.MAX_MPR else 0
 
 
 class Annunciators2(cansimlib.Device2):
