@@ -71,7 +71,7 @@ async def main_loop() -> None:
     # subsribe devices
     logger.info("Registering devices")
     devices = arrowiiiturbodevices.Devices()
-    devices.arrowiiiturbodevices.register(sim, can)
+    devices.register(sim, can)
 
     # run can receiver and websockets receiver async
     logger.info("Starting main loop")
