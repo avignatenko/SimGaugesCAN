@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class DatarefSubscription:
-    def __init__(self, sim, dt, index: list | None, tolerance=0.01):
-        self._dt = dt
+    def __init__(self, sim, dataref_id, index: list | None, tolerance=0.01):
+        self._datatef_id = dataref_id
         self._index = index
         self._tolerance = tolerance
         self._sim: XPlaneClient = sim
@@ -20,8 +20,8 @@ class DatarefSubscription:
 
     @classmethod
     async def create(cls, sim, dataref_str, index: list | None, tolerance=0.01):
-        dt = await sim.subscribe_dataref_no_callback(dataref_str)
-        return cls(sim, dt, index, tolerance)
+        dataref_id = await sim.subscribe_dataref(dataref_str)
+        return cls(sim, dataref_id, index, tolerance)
 
     def _is_small_change(self, new_value: list):
         if not self._prev_value or not self._tolerance:
@@ -44,7 +44,7 @@ class DatarefSubscription:
 
     async def receive_new_value(self):
         while True:
-            value = self._sim.get_dataref(self._dt)
+            value = self._sim.get_dataref(self._datatef_id)
             if value is not None:
                 # remove unused
                 if self._index:
@@ -52,9 +52,9 @@ class DatarefSubscription:
 
                 if not self._is_small_change(value):
                     self._prev_value = value
-                    return value[0] if len(value) == 1 else value
+                    return self.get_value()
 
-            await self._sim.receive_new_dataref(self._dt)
+            await self._sim.receive_new_dataref(self._datatef_id)
 
 
 class XPlaneClient:
@@ -144,7 +144,7 @@ class XPlaneClient:
 
         return self._datarefs_storage[dataref_id]
 
-    async def subscribe_dataref_no_callback(self, dataref: str, freq: float = 10) -> int:
+    async def subscribe_dataref(self, dataref: str, freq: float = 10) -> int:
         del freq  # unused
 
         dataref_id = await self.get_dataref_id(dataref)

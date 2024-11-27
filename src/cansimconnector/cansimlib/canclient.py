@@ -25,7 +25,7 @@ class CANMessageSubscription:
         COMPARE = 1
 
     def __init__(self, can_bus, can_id, port, msg_type, compare: ValuePolicy = ValuePolicy.COMPARE):
-        self._can = can_bus
+        self._can: CANClient = can_bus
         self._id = can_id
         self._port = port
         self._msg_type = msg_type
@@ -35,7 +35,7 @@ class CANMessageSubscription:
     @classmethod
     async def create(cls, can_bus, can_id, port, msg_type, compare: ValuePolicy = ValuePolicy.COMPARE):
         """Create can message, including registering subscription"""
-        await can_bus.subscribe_message_port_no_callback(can_id, port)
+        await can_bus.subscribe_message(can_id, port)
 
         return cls(can_bus, can_id, port, msg_type, compare)
 
@@ -103,7 +103,7 @@ class CANClient:
             payload=payload,
         )
 
-    async def subscribe_message_port_no_callback(self, can_id: int, port: int):
+    async def subscribe_message(self, can_id: int, port: int):
         self._values.setdefault(
             (can_id, port),
             self.CANMessageData(asyncio.get_running_loop().create_future()),
