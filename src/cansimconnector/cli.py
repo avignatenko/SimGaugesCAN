@@ -84,6 +84,4 @@ async def main_loop() -> None:
 @click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="CANSimConnector")
 def cansimconnector():
-
-
     run(main_loop(), debug=True)

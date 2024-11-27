@@ -2,7 +2,6 @@ import asyncio
 import enum
 import logging
 from dataclasses import dataclass
-from typing import Callable
 
 import can
 
@@ -100,9 +99,6 @@ class CANClient:
             payload=payload,
         )
 
-    async def subscribe_message(self, can_id: int, function: Callable):
-        await self.subscribe_message_port(can_id, None, function)
-
     async def subscribe_message_port_no_callback(self, can_id: int, port: int):
         self._values.setdefault(
             (can_id, port),
@@ -121,8 +117,6 @@ class CANClient:
         notifier = can.Notifier(self._bus, listeners=[reader], loop=loop)
 
         logger.info("Starting CAN handler")
-
-        background_tasks = set()
 
         while True:
             message = await reader.get_message()

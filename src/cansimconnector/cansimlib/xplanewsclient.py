@@ -38,9 +38,7 @@ class XPlaneClient:
     async def _process_datarefs_update(self, data):
         async with asyncio.TaskGroup() as tg:
             for dataref_id_str, value in data.items():
-                tg.create_task(
-                    self._process_single_dataref_update(int(dataref_id_str), value)
-                )
+                tg.create_task(self._process_single_dataref_update(int(dataref_id_str), value))
 
     async def connect(self, uri):
         try:
@@ -48,9 +46,7 @@ class XPlaneClient:
                 base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=100)
             )
             # no compression, no ping for performance (maybe reconsider)
-            self._wsclient = await connect(
-                f"ws://{uri}/api/v1", compression=None, ping_interval=None
-            )
+            self._wsclient = await connect(f"ws://{uri}/api/v1", compression=None, ping_interval=None)
         except (OSError, TimeoutError):
             if self._httpsession is not None:
                 await self._httpsession.close()
@@ -59,9 +55,7 @@ class XPlaneClient:
             raise
 
     async def get_dataref_id(self, dataref: str) -> int:
-        async with self._httpsession.get(
-            f"/api/v1/datarefs?filter[name]={dataref}"
-        ) as response:
+        async with self._httpsession.get(f"/api/v1/datarefs?filter[name]={dataref}") as response:
             json = await response.json()
             dataref_id = json["data"][0]["id"]
             logger.debug("Dataref %s ID is %s", dataref, dataref_id)
@@ -103,9 +97,7 @@ class XPlaneClient:
 
         return self._datarefs_storage[dataref_id]
 
-    async def subscribe_dataref_no_callback(
-        self, dataref: str, freq: float = 10
-    ) -> int:
+    async def subscribe_dataref_no_callback(self, dataref: str, freq: float = 10) -> int:
         del freq  # unused
 
         dataref_id = await self.get_dataref_id(dataref)
@@ -127,9 +119,7 @@ class XPlaneClient:
                     await self._process_datarefs_update(data_json["data"])
                 case "result":
                     if data_json["success"] is False:
-                        logger.error(
-                            "WS error returned for request %s", data_json["req_id"]
-                        )
+                        logger.error("WS error returned for request %s", data_json["req_id"])
 
     def __del__(self):
         if self._wsclient:
