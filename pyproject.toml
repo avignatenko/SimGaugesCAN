@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-pyinstaller"]
 build-backend = "hatchling.build"
 
 
@@ -57,3 +57,10 @@ exclude_lines = [
   "if TYPE_CHECKING:",
 ]
 
+[tool.hatch.build.targets.pyinstaller]
+require-runtime-dependencies = true
+scriptname = "src/cansimconnector/__main__.py"
+flags = ["--clean", "--onedir"]
+hidden-import = ["can.interfaces.slcan", "winloop._noop"]
+log-level = "WARN"
+name = "cansimconnector"
