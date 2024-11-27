@@ -60,7 +60,7 @@ exclude_lines = [
 [tool.hatch.build.targets.pyinstaller]
 require-runtime-dependencies = true
 scriptname = "src/cansimconnector/__main__.py"
-flags = ["--clean", "--onedir"]
+flags = ["--clean", "--onedir", "--noconfirm"]
 hidden-import = ["can.interfaces.slcan", "winloop._noop"]
 log-level = "WARN"
 name = "cansimconnector"
