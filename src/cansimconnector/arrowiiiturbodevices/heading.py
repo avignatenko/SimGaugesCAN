@@ -54,7 +54,7 @@ class Heading2(cansimlib.Device2):
             self.CAN_ID,
             0,
             cansimlib.CANMessageSubscription.CANType.FLOAT,
-            compare=False,
+            compare=cansimlib.CANMessageSubscription.ValuePolicy.SEND_ALWAYS,
         )
 
         dg_drift_dataref_id = await self._sim.get_dataref_id("sim/cockpit/gyros/dg_drift_vac_deg")
@@ -77,7 +77,7 @@ class Heading2(cansimlib.Device2):
             self.CAN_ID,
             1,
             cansimlib.CANMessageSubscription.CANType.FLOAT,
-            compare=False,
+            compare=cansimlib.CANMessageSubscription.ValuePolicy.SEND_ALWAYS,
         )
 
         ap_bug_mag_dataref_id = await self._sim.get_dataref_id("sim/cockpit/autopilot/heading_mag")

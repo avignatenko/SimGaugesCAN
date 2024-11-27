@@ -11,7 +11,10 @@ class STec30Alt2(cansimlib.Device2):
     async def run(self):
         self._on = False
         can_message = await self.create_can_message_subscription(
-            self.CAN_ID, 0, cansimlib.CANMessageSubscription.CANType.BYTE, compare=False
+            self.CAN_ID,
+            0,
+            cansimlib.CANMessageSubscription.CANType.BYTE,
+            compare=cansimlib.CANMessageSubscription.ValuePolicy.SEND_ALWAYS,
         )
 
         while True:

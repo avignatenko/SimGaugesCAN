@@ -64,3 +64,11 @@ flags = ["--clean", "--onedir", "--noconfirm"]
 hidden-import = ["can.interfaces.slcan", "winloop._noop"]
 log-level = "WARN"
 name = "cansimconnector"
+
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.format]
+preview = true

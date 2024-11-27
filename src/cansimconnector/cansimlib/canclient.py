@@ -20,7 +20,11 @@ class CANMessageSubscription:
         BYTE = 2
         USHORT = 3
 
-    def __init__(self, can_bus, can_id, port, msg_type, compare: bool = True):
+    class ValuePolicy(enum.Enum):
+        SEND_ALWAYS = 0
+        COMPARE = 1
+
+    def __init__(self, can_bus, can_id, port, msg_type, compare: ValuePolicy = ValuePolicy.COMPARE):
         self._can = can_bus
         self._id = can_id
         self._port = port
@@ -29,7 +33,7 @@ class CANMessageSubscription:
         self._compare = compare
 
     @classmethod
-    async def create(cls, can_bus, can_id, port, msg_type, compare: bool = True):
+    async def create(cls, can_bus, can_id, port, msg_type, compare: ValuePolicy = ValuePolicy.COMPARE):
         """Create can message, including registering subscription"""
         await can_bus.subscribe_message_port_no_callback(can_id, port)
 
@@ -42,7 +46,7 @@ class CANMessageSubscription:
         return self._prev_payload == new_payload
 
     async def receive_new_payload(self):
-        if not self._compare:
+        if self._compare == CANMessageSubscription.ValuePolicy.SEND_ALWAYS:
             return await self._can.wait_message(self._id, self._port)
 
         while True:
