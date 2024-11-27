@@ -10,6 +10,53 @@ from websockets.asyncio.client import ClientConnection, connect
 logger = logging.getLogger(__name__)
 
 
+class DatarefSubscription:
+    def __init__(self, sim, dt, index: list | None, tolerance=0.01):
+        self._dt = dt
+        self._index = index
+        self._tolerance = tolerance
+        self._sim: XPlaneClient = sim
+        self._prev_value = None
+
+    @classmethod
+    async def create(cls, sim, dataref_str, index: list | None, tolerance=0.01):
+        dt = await sim.subscribe_dataref_no_callback(dataref_str)
+        return cls(sim, dt, index, tolerance)
+
+    def _is_small_change(self, new_value: list):
+        if not self._prev_value or not self._tolerance:
+            return False
+
+        small_change = True
+
+        for prev_value, value in zip(self._prev_value, new_value):
+            small_change = abs(prev_value - value) < self._tolerance
+            if not small_change:
+                break
+
+        return small_change
+
+    def get_value(self):
+        value = self._prev_value
+        if value is None:
+            return value
+        return value[0] if len(value) == 1 else value
+
+    async def receive_new_value(self):
+        while True:
+            value = self._sim.get_dataref(self._dt)
+            if value is not None:
+                # remove unused
+                if self._index:
+                    value = [value[i] for i in self._index]
+
+                if not self._is_small_change(value):
+                    self._prev_value = value
+                    return value[0] if len(value) == 1 else value
+
+            await self._sim.receive_new_dataref(self._dt)
+
+
 class XPlaneClient:
     class DatarefData:
         def __init__(self):
@@ -56,8 +103,8 @@ class XPlaneClient:
 
     async def get_dataref_id(self, dataref: str) -> int:
         async with self._httpsession.get(f"/api/v1/datarefs?filter[name]={dataref}") as response:
-            json = await response.json()
-            dataref_id = json["data"][0]["id"]
+            response_json = await response.json()
+            dataref_id = response_json["data"][0]["id"]
             logger.debug("Dataref %s ID is %s", dataref, dataref_id)
             return dataref_id
 
