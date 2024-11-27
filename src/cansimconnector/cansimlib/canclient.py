@@ -74,7 +74,6 @@ class CANClient:
 
     def __init__(self):
         self._bus: can.interface.Bus = None
-        self._callbacks = {}
         self._values: dict[self.CANMessageData] = {}
 
     def _init_bus(self, channel, tty_baudrate):
@@ -103,11 +102,6 @@ class CANClient:
 
     async def subscribe_message(self, can_id: int, function: Callable):
         await self.subscribe_message_port(can_id, None, function)
-
-    async def subscribe_message_port(self, can_id: int, port: int, function: Callable):
-        canid_callbacks = self._callbacks.setdefault(can_id, {})
-        port_callbacks = canid_callbacks.setdefault(port, [])
-        port_callbacks.append(function)
 
     async def subscribe_message_port_no_callback(self, can_id: int, port: int):
         self._values.setdefault(
@@ -140,21 +134,10 @@ class CANClient:
             value = self._values.get((src_id, port))
             if value is None:
                 logger.info("Received CAN value from %s, %s, but no subscribers", src_id, port)
-                # continue
-            else:
-                value.value = message.data
-                value.value_future.set_result(message.data)
-                value.value_future = asyncio.get_running_loop().create_future()
-
-            canid_callbacks = self._callbacks.get(src_id)
-            if not canid_callbacks:
                 continue
 
-            callbacks = canid_callbacks.get(None, []) + canid_callbacks.get(port, [])
-
-            for callback in callbacks:
-                task = asyncio.create_task(callback(port, message.data))
-                background_tasks.add(task)
-                task.add_done_callback(background_tasks.discard)
+            value.value = message.data
+            value.value_future.set_result(message.data)
+            value.value_future = asyncio.get_running_loop().create_future()
 
         notifier.stop()

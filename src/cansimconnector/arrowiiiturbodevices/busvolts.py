@@ -9,9 +9,10 @@ bus_volts_subscription = cansimlib.SingleValueIndicator.DatarefSubsription(
 )
 
 
-def electrics_on(volts):
-    return volts > 5
+ELECTRICS_MIN_VOLTS = 5
 
+def electrics_on(volts):
+    return volts > ELECTRICS_MIN_VOLTS
 
 class BusVolts:
     def __init__(self, sim):
