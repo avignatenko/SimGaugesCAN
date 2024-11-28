@@ -28,7 +28,7 @@ class Devices:
         self._devices = []
 
     def register(self, sim: cansimlib.XPlaneClient, can: cansimlib.CANClient):
-        self._devices_2 = [
+        self._devices = [
             Airspeed2(sim, can),
             Altitude2(sim, can),
             Annunciators2(sim, can),
