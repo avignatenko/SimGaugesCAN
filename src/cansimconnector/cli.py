@@ -49,7 +49,13 @@ async def connect_can(config) -> cansimlib.CANClient:
 
 
 async def main_loop() -> None:
-    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=[
+            logging.FileHandler("cansimconnector.log"),
+            logging.StreamHandler(stream=sys.stderr),
+        ],
+    )
 
     asyncio.get_event_loop().slow_callback_duration = 15  # all callbacks should fit into 15ms
 
