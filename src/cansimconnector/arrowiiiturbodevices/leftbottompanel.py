@@ -33,14 +33,14 @@ class LeftBottomPane2(cansimlib.Device2):
 
     async def _run_gear_leds(self):
         gear_deploy_status = await self.create_dataref_subscription(
-            "sim/aircraft/parts/acf_gear_deploy", index=[0, 1, 2], tolerance=0.1
+            "sim/flightmodel2/gear/deploy_ratio", index=[0, 1, 2], tolerance=0.1
         )
 
         while True:
             value = await gear_deploy_status.receive_new_value()
-            self._gear_light_on[0] = value[0] > 0.99  # noqa: PLR2004
-            self._gear_light_on[1] = value[1] > 0.99  # noqa: PLR2004
-            self._gear_light_on[2] = value[2] > 0.99  # noqa: PLR2004
+            self._gear_light_on[0] = value[0] > 0.95  # noqa: PLR2004
+            self._gear_light_on[1] = value[1] > 0.95  # noqa: PLR2004
+            self._gear_light_on[2] = value[2] > 0.95  # noqa: PLR2004
             await self._update_gear_leds()
 
     async def _run_ap_rotator(self):
