@@ -14,7 +14,7 @@ class IndicatorsPanel(cansimlib.Device2):
 
         while True:
             value = await dataref.receive_new_value()
-            await self._can.send(self.CAN_ID, port, cansimlib.make_payload_float(value))
+            await self._can.send_float(self.CAN_ID, port, value)
 
     async def run(self):
         async with asyncio.TaskGroup() as tg:

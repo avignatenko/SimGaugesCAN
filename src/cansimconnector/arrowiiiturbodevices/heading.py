@@ -24,7 +24,7 @@ class Heading2(cansimlib.Device2):
 
         while True:
             value = await dataref.receive_new_value()
-            await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value))
+            await self._can.send_float(self.CAN_ID, 0, value)
 
     async def _run_ap_bug_update(self):
         dataref = await self.create_dataref_subscription("sim/cockpit/autopilot/heading_mag", tolerance=0.1)
@@ -37,7 +37,7 @@ class Heading2(cansimlib.Device2):
 
             self._ap_bug_mag_current = value
 
-            await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_float(value))
+            await self._can.send_float(self.CAN_ID, 1, value)
 
     async def _run_dg_drift_update(self):
         dataref = await self.create_dataref_subscription("sim/cockpit/gyros/dg_drift_vac_deg")
@@ -92,7 +92,7 @@ class Heading2(cansimlib.Device2):
             self._ap_bug_manual_knob_override_mode = True
             self._ap_bug_mag_current += value
             self._ap_bug_mag_current %= 360
-            await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_float(self._ap_bug_mag_current))
+            await self._can.send_float(self.CAN_ID, 1, self._ap_bug_mag_current)
             await self._sim.send_dataref(ap_bug_mag_dataref_id, None, self._ap_bug_mag_current)
             logger.debug("update sent!! %s", self._ap_bug_mag_current)
             self._ap_bug_restore_sim_mode_task = asyncio.create_task(self._restore_sim_mode_ap_bug_mag())

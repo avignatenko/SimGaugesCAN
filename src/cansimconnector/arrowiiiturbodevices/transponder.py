@@ -14,7 +14,7 @@ class Transponder2(cansimlib.Device2):
         volts = await self.create_dataref_subscription("sim/cockpit2/electrical/bus_volts", index=[0], tolerance=0.1)
         while True:
             value = await volts.receive_new_value()
-            await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_byte(int(value)))
+            await self._can.send_byte(self.CAN_ID, 1, int(value))
 
     async def run_transponder_code(self):
         code_dataref_id = await self._sim.get_dataref_id("sim/cockpit2/radios/actuators/transponder_code")
@@ -51,7 +51,7 @@ class Transponder2(cansimlib.Device2):
 
         while True:
             value = await brightness.receive_new_value()
-            await self._can.send(self.CAN_ID, 2, cansimlib.make_payload_byte(1 if value > self.LED_VALUE_ON else 0))
+            await self._can.send_byte(self.CAN_ID, 2, 1 if value > self.LED_VALUE_ON else 0)
 
     async def run(self):
         async with asyncio.TaskGroup() as tg:

@@ -21,5 +21,5 @@ class STec30Alt2(cansimlib.Device2):
             await can_message.receive_new_value()
             # test actions
             self._on = not self._on
-            await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_byte(int(self._on)))
-            await self._can.send(self.CAN_ID, 1, cansimlib.make_payload_byte(int(self._on)))
+            await self._can.send_byte(self.CAN_ID, 0, int(self._on))
+            await self._can.send_byte(self.CAN_ID, 1, int(self._on))

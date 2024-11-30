@@ -13,4 +13,4 @@ class VerticalSpeed2(cansimlib.Device2):
 
         while True:
             value = await vspeed.receive_new_value()
-            await self._can.send(self.CAN_ID, 0, cansimlib.make_payload_float(value / 100))
+            await self._can.send_float(self.CAN_ID, 0, value / 100)

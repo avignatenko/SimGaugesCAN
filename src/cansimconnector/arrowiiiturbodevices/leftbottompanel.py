@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import asynciolimiter
 
 from cansimconnector import cansimlib
 from cansimconnector.arrowiiiturbodevices import busvolts
@@ -17,7 +16,8 @@ class LeftBottomPane2(cansimlib.Device2):
         self._value_volts = None
         self._gear_light_on = [None] * 3
         self._keep_ingition_task = None
-        self._limiter = asynciolimiter.StrictLimiter(1000)  # 1000 calls per second
+        super().enable_rate_limiter(1000)
+        super().set_can_id(self.CAN_ID)
 
     async def _run_volts(self):
         volts = await self.create_dataref_subscription("sim/cockpit2/electrical/bus_volts", index=[0], tolerance=0.1)
@@ -29,24 +29,9 @@ class LeftBottomPane2(cansimlib.Device2):
         if None in {*self._gear_light_on, self._value_volts}:
             return
 
-        await self._can.send(
-            self.CAN_ID,
-            2,
-            cansimlib.make_payload_byte(int(busvolts.electrics_on(self._value_volts) and self._gear_light_on[0])),
-            self._limiter,
-        )
-        await self._can.send(
-            self.CAN_ID,
-            0,
-            cansimlib.make_payload_byte(int(busvolts.electrics_on(self._value_volts) and self._gear_light_on[1])),
-            self._limiter,
-        )
-        await self._can.send(
-            self.CAN_ID,
-            1,
-            cansimlib.make_payload_byte(int(busvolts.electrics_on(self._value_volts) and self._gear_light_on[2])),
-            self._limiter,
-        )
+        await self.can_send_byte(2, int(busvolts.electrics_on(self._value_volts) and self._gear_light_on[0]))
+        await self.can_send_byte(0, int(busvolts.electrics_on(self._value_volts) and self._gear_light_on[1]))
+        await self.can_send_byte(1, int(busvolts.electrics_on(self._value_volts) and self._gear_light_on[2]))
 
     async def _run_gear_leds(self):
         gear_deploy_status = await self.create_dataref_subscription(
