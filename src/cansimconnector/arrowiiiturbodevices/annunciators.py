@@ -67,12 +67,9 @@ class LedGaugeMPR(LedGauge):
 
 
 class Annunciators2(cansimlib.Device2):
-    CAN_ID = 26
-
     def __init__(self, sim, can):
-        super().__init__(sim, can)
+        super().__init__(sim, can, can_id=26)
         super().enable_rate_limiter(1000)
-        super().set_can_id(self.CAN_ID)
 
     async def run(self):
         led_gauge = LedGauge(

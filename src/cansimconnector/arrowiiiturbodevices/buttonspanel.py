@@ -7,13 +7,12 @@ logger = logging.getLogger(__name__)
 
 
 class ButtonsPanel2(cansimlib.Device2):
-    CAN_ID = 24
+    def __init__(self, sim, can):
+        super().__init__(sim, can, can_id=24)
 
     async def run_button(self, dataref_str, port, idx=None):
         dataref_id = await self._sim.get_dataref_id(dataref_str)
-        can_message = await self.create_can_message_subscription(
-            self.CAN_ID, port, cansimlib.CANMessageSubscription.CANType.BYTE
-        )
+        can_message = await self.create_can_message_subscription2(port, cansimlib.CANMessageSubscription.CANType.BYTE)
 
         while True:
             value = await can_message.receive_new_value()

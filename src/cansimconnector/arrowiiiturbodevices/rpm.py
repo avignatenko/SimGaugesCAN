@@ -6,7 +6,8 @@ logger = logging.getLogger(__name__)
 
 
 class RPM2(cansimlib.Device2):
-    CAN_ID = 21
+    def __init__(self, sim, can):
+        super().__init__(sim, can, can_id=21)
 
     async def run(self):
         rpm = await self.create_dataref_subscription(
@@ -15,4 +16,4 @@ class RPM2(cansimlib.Device2):
 
         while True:
             value = await rpm.receive_new_value()
-            await self._can.send_float(self.CAN_ID, 0, value)
+            await self.can_send_float(0, value)

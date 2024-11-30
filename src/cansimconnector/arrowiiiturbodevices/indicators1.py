@@ -7,14 +7,15 @@ logger = logging.getLogger(__name__)
 
 
 class IndicatorsPanel(cansimlib.Device2):
-    CAN_ID = 27
+    def __init__(self, sim, can):
+        super().__init__(sim, can, can_id=27)
 
     async def run_indicator(self, dataref_str, port, idx=None, tolerance=0.01):
         dataref = await self.create_dataref_subscription(dataref_str, index=idx, tolerance=tolerance)
 
         while True:
             value = await dataref.receive_new_value()
-            await self._can.send_float(self.CAN_ID, port, value)
+            await self.can_send_float(port, value)
 
     async def run(self):
         async with asyncio.TaskGroup() as tg:

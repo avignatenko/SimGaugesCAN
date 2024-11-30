@@ -6,13 +6,14 @@ logger = logging.getLogger(__name__)
 
 
 class FuelSelector2(cansimlib.Device2):
-    CAN_ID = 30
+    def __init__(self, sim, can):
+        super().__init__(sim, can, can_id=30)
 
     async def run(self):
         fuel_tank_selector_dataref_id = await self._sim.get_dataref_id("sim/cockpit2/fuel/fuel_tank_selector")
 
-        tank_selector_knob = await self.create_can_message_subscription(
-            self.CAN_ID, 0, cansimlib.CANMessageSubscription.CANType.BYTE
+        tank_selector_knob = await self.create_can_message_subscription2(
+            0, cansimlib.CANMessageSubscription.CANType.BYTE
         )
 
         while True:
