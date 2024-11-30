@@ -93,7 +93,9 @@ class CANClient:
         #    None, self._init_bus, channel, tty_baudrate
         # )
 
-    async def send(self, target_id: int, target_port: int, payload: list):
+    async def send(self, target_id: int, target_port: int, payload: list, limiter=None):
+        if limiter:
+            await limiter.wait()
         common.send_command(
             self._bus,
             id_src=1,

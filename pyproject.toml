@@ -15,6 +15,7 @@ dependencies = [
   "pyserial", 
   "python-can", 
   "websockets", 
+  "asynciolimiter",
   'uvloop ; platform_system != "Windows"',
   'winloop ; platform_system == "Windows"',]
 
