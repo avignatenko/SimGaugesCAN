@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import abc
 import logging
+from typing import Optional
 
 import asynciolimiter
 
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Device2:
-    def __init__(self, sim: xplanewsclient.XPlaneClient, can: canclient.CANClient, can_id: int = None):
+    def __init__(self, sim: xplanewsclient.XPlaneClient, can: canclient.CANClient, can_id: Optional[int] = None):
         self._sim = sim
         self._can = can
         self._rate_limiter = None
