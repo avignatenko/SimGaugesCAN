@@ -16,7 +16,7 @@ class ButtonsPanel2(cansimlib.Device2):
 
         while True:
             value = await can_message.receive_new_value()
-            await self._sim.send_dataref(dataref_id, idx, value)
+            await self._sim.send_dataref_idx(dataref_id, idx, value)
 
     async def run(self):
         async with asyncio.TaskGroup() as tg:

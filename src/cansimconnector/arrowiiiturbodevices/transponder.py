@@ -24,7 +24,7 @@ class Transponder2(cansimlib.Device2):
 
         while True:
             squawk = await code_message.receive_new_value()
-            await self._sim.send_dataref(code_dataref_id, None, squawk)
+            await self._sim.send_dataref(code_dataref_id, squawk)
 
     async def run_transponder_mode(self):
         mode_dataref_id = await self._sim.get_dataref_id("sim/cockpit2/radios/actuators/transponder_mode")
@@ -32,7 +32,7 @@ class Transponder2(cansimlib.Device2):
 
         while True:
             mode = await mode_message.receive_new_value()
-            await self._sim.send_dataref(mode_dataref_id, None, mode - 1)
+            await self._sim.send_dataref(mode_dataref_id, mode - 1)
 
     async def run_transponder_ident(self):
         ident_message = await self.create_can_message_subscription2(2, cansimlib.CANMessageSubscription.CANType.BYTE)

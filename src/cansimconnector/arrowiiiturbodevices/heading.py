@@ -65,7 +65,7 @@ class Heading2(cansimlib.Device2):
             self._dg_drift_current += value
             self._dg_drift_current %= 360
 
-            await self._sim.send_dataref(dg_drift_dataref_id, None, self._dg_drift_current)
+            await self._sim.send_dataref(dg_drift_dataref_id, self._dg_drift_current)
             logger.debug("update sent!! %s", self._dg_drift_current)
             self._dg_drift_restore_sim_mode_task = asyncio.create_task(self._restore_sim_mode_dg_drift_mag())
 
@@ -89,7 +89,7 @@ class Heading2(cansimlib.Device2):
             self._ap_bug_mag_current += value
             self._ap_bug_mag_current %= 360
             await self.can_send_float(1, self._ap_bug_mag_current)
-            await self._sim.send_dataref(ap_bug_mag_dataref_id, None, self._ap_bug_mag_current)
+            await self._sim.send_dataref(ap_bug_mag_dataref_id, self._ap_bug_mag_current)
             logger.debug("update sent!! %s", self._ap_bug_mag_current)
             self._ap_bug_restore_sim_mode_task = asyncio.create_task(self._restore_sim_mode_ap_bug_mag())
 

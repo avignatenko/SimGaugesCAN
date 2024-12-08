@@ -108,7 +108,10 @@ class XPlaneClient:
             logger.debug("Dataref %s ID is %s", dataref, dataref_id)
             return dataref_id
 
-    async def send_dataref(self, dataref_id: int, index, dataref_value) -> None:
+    async def send_dataref(self, dataref_id: int, dataref_value) -> None:
+        self.send_dataref_idx(dataref_id, None, dataref_value)
+
+    async def send_dataref_idx(self, dataref_id: int, index, dataref_value) -> None:
         dataref_value = {"id": dataref_id, "value": dataref_value}
         if index is not None:
             dataref_value["index"] = index

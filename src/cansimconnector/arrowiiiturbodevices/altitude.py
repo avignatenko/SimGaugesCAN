@@ -19,7 +19,7 @@ class Altitude2(cansimlib.Device2):
 
         while True:
             value = await knob.receive_new_value()
-            await self._sim.send_dataref(bar_in_hg_dataref_id, None, value)
+            await self._sim.send_dataref(bar_in_hg_dataref_id, value)
 
     async def run_altitude(self):
         alt = await self.create_dataref_subscription(

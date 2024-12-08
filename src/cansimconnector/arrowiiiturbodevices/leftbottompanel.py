@@ -38,9 +38,9 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             value = await gear_deploy_status.receive_new_value()
-            self._gear_light_on[0] = value[0] > 0.95  # noqa: PLR2004
-            self._gear_light_on[1] = value[1] > 0.95  # noqa: PLR2004
-            self._gear_light_on[2] = value[2] > 0.95  # noqa: PLR2004
+            self._gear_light_on[0] = value[0] > 0.99  # noqa: PLR2004
+            self._gear_light_on[1] = value[1] > 0.99  # noqa: PLR2004
+            self._gear_light_on[2] = value[2] > 0.99  # noqa: PLR2004
             await self._update_gear_leds()
 
     async def _run_ap_rotator(self):
@@ -51,7 +51,7 @@ class LeftBottomPane2(cansimlib.Device2):
             data = await can_message.receive_new_value()
             roll_value = (data - 440) / (0 + 440) * 35 if data < 440 else (data - 440) / (1024 - 440) * 35  # noqa:  PLR2004
 
-            await self._sim.send_dataref(dataref_id, None, roll_value)
+            await self._sim.send_dataref(dataref_id, roll_value)
 
     async def _run_ap_left_button(self):
         dataref_id = await self._sim.get_dataref_id("thranda/autopilot/roll")
@@ -59,7 +59,7 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             data = await can_message.receive_new_value()
-            await self._sim.send_dataref(dataref_id, None, data)
+            await self._sim.send_dataref(dataref_id, data)
 
     async def _run_ap_right_button(self):
         dataref_id = await self._sim.get_dataref_id("thranda/autopilot/hdg")
@@ -67,7 +67,7 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             data = await can_message.receive_new_value()
-            await self._sim.send_dataref(dataref_id, None, data)
+            await self._sim.send_dataref(dataref_id, data)
 
     async def _run_gear_handle(self):
         dataref_id = await self._sim.get_dataref_id("sim/cockpit/switches/gear_handle_status")
@@ -75,7 +75,7 @@ class LeftBottomPane2(cansimlib.Device2):
 
         while True:
             data = await can_message.receive_new_value()
-            await self._sim.send_dataref(dataref_id, None, data)
+            await self._sim.send_dataref(dataref_id, data)
 
     async def _run_ignition(self):
         dataref_id = await self._sim.get_dataref_id("sim/cockpit2/engine/actuators/ignition_key")
@@ -86,13 +86,13 @@ class LeftBottomPane2(cansimlib.Device2):
             if data != self.IGNITION_ON_VALUE:
                 if self._keep_ingition_task is not None:
                     self._keep_ingition_task.cancel()
-                await self._sim.send_dataref(dataref_id, 0, data)
+                await self._sim.send_dataref_idx(dataref_id, 0, data)
             else:
                 self._keep_ingition_task = asyncio.create_task(self._keep_ignition(dataref_id))
 
     async def _keep_ignition(self, dataref_id):
         while True:
-            await self._sim.send_dataref(dataref_id, 0, self.IGNITION_ON_VALUE)
+            await self._sim.send_dataref_idx(dataref_id, 0, self.IGNITION_ON_VALUE)
             await asyncio.sleep(0.05)
 
     async def run(self):
