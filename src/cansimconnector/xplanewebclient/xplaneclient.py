@@ -5,7 +5,7 @@ import json
 import logging
 
 import aiohttp
-from websockets.asyncio.client import ClientConnection, connect
+# from websockets.asyncio.client import ClientConnection, connect
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,8 @@ class XPlaneClient:
             self.value_future = asyncio.get_running_loop().create_future()
 
     def __init__(self):
-        self._wsclient: ClientConnection = None
+        #     self._wsclient: ClientConnection = None
+        self._wssession: aiohttp.ClientWebSocketResponse = None
         self._httpsession: aiohttp.ClientSession = None
         self._datarefs_storage: dict[int, self.DatarefData] = {}
 
@@ -92,13 +93,17 @@ class XPlaneClient:
             self._httpsession = aiohttp.ClientSession(
                 base_url=f"http://{uri}", timeout=aiohttp.ClientTimeout(total=100)
             )
+            # self._wssession = self._httpsession.ws_connect(f"ws://{uri}/api/v1")
+
+            self._wssession = await self._httpsession.ws_connect("/api/v1")
+
             # no compression, no ping for performance (maybe reconsider)
-            self._wsclient = await connect(f"ws://{uri}/api/v1", compression=None, ping_interval=None)
+            # self._wsclient = await connect(f"ws://{uri}/api/v1", compression=None, ping_interval=None)
         except (OSError, TimeoutError):
             if self._httpsession is not None:
                 await self._httpsession.close()
-            if self._wsclient is not None:
-                await self._wsclient.close()
+            # if self._wsclient is not None:
+            #    await self._wsclient.close()
             raise
 
     async def get_dataref_id(self, dataref: str) -> int:
@@ -121,7 +126,8 @@ class XPlaneClient:
             "type": "dataref_set_values",
             "params": {"datarefs": [dataref_value]},
         }
-        await self._wsclient.send(json.dumps(update_request))
+        # await self._wsclient.send(json.dumps(update_request))
+        self._wssession.send_json(update_request)
 
     def get_dataref(self, dataref_id: int):
         return self._datarefs_storage.get(dataref_id).value
@@ -141,7 +147,8 @@ class XPlaneClient:
                 "params": {"datarefs": [dataref_subscription]},
             }
 
-            await self._wsclient.send(json.dumps(subscribe_request))
+            # await self._wsclient.send(json.dumps(subscribe_request))
+            self._wssession.send_json(subscribe_request)
 
             self._datarefs_storage[dataref_id] = self.DatarefData()
 
@@ -161,8 +168,11 @@ class XPlaneClient:
         logger.info("Starting WebSockets handler")
 
         while True:
-            data = await self._wsclient.recv(decode=False)
-            data_json = json.loads(data)
+            # data = await self._wsclient.recv(decode=False)
+            # data_json = json.loads(data)
+
+            data_json = await self._wssession.receive_json()
+
             # switch by message type
             match data_json["type"]:
                 case "dataref_update_values":
@@ -171,6 +181,7 @@ class XPlaneClient:
                     if data_json["success"] is False:
                         logger.error("WS error returned for request %s", data_json["req_id"])
 
-    def __del__(self):
-        if self._wsclient:
-            self._wsclient.close()
+
+#    def __del__(self):
+#        if self._wsclient:
+#            self._wsclient.close()
