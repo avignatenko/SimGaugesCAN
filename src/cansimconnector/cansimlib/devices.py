@@ -5,9 +5,9 @@ import logging
 
 import asynciolimiter
 
-from cansimconnector.cansimlib import canclient
 from cansimconnector import xplanewebclient
 
+from . import canclient
 
 logger = logging.getLogger(__name__)
 

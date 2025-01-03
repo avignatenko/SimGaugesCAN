@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import can
 
-from cansimconnector.cansimlib import common
+from . import common
 
 logger = logging.getLogger(__name__)
 
