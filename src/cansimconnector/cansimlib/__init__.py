@@ -13,7 +13,7 @@ from cansimconnector.cansimlib.common import (
     src_id_from_canid,
 )
 from cansimconnector.cansimlib.devices import Device2
-from cansimconnector.cansimlib.xplanewsclient import DatarefSubscription, XPlaneClient
+from cansimconnector.xplanewebclient import DatarefSubscription, XPlaneClient
 
 __all__ = [
     "CANClient",

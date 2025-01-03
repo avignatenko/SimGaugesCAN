@@ -5,13 +5,15 @@ import logging
 
 import asynciolimiter
 
-from cansimconnector.cansimlib import canclient, xplanewsclient
+from cansimconnector.cansimlib import canclient
+from cansimconnector import xplanewebclient
+
 
 logger = logging.getLogger(__name__)
 
 
 class Device2:
-    def __init__(self, sim: xplanewsclient.XPlaneClient, can: canclient.CANClient, can_id: int | None = None):
+    def __init__(self, sim: xplanewebclient.XPlaneClient, can: canclient.CANClient, can_id: int | None = None):
         self._sim = sim
         self._can = can
         self._rate_limiter = None
@@ -27,7 +29,7 @@ class Device2:
         return self._can_id
 
     async def create_dataref_subscription(self, dataref_str, index: list[int] | None = None, tolerance=0.01):
-        return await xplanewsclient.DatarefSubscription.create(
+        return await xplanewebclient.DatarefSubscription.create(
             self._sim,
             dataref_str,
             index,
@@ -39,16 +41,16 @@ class Device2:
         can_id,
         port,
         msg_type,
-        compare: xplanewsclient.CANMessageSubscription.ValuePolicy = canclient.CANMessageSubscription.ValuePolicy.COMPARE,
-    ) -> xplanewsclient.CANMessageSubscription:
+        compare: xplanewebclient.CANMessageSubscription.ValuePolicy = canclient.CANMessageSubscription.ValuePolicy.COMPARE,
+    ) -> xplanewebclient.CANMessageSubscription:
         return await canclient.CANMessageSubscription.create(self._can, can_id, port, msg_type, compare)
 
     async def create_can_message_subscription2(
         self,
         port,
         msg_type,
-        compare: xplanewsclient.CANMessageSubscription.ValuePolicy = canclient.CANMessageSubscription.ValuePolicy.COMPARE,
-    ) -> xplanewsclient.CANMessageSubscription:
+        compare: xplanewebclient.CANMessageSubscription.ValuePolicy = canclient.CANMessageSubscription.ValuePolicy.COMPARE,
+    ) -> xplanewebclient.CANMessageSubscription:
         return await canclient.CANMessageSubscription.create(self._can, self._can_id, port, msg_type, compare)
 
     async def can_send_float(self, target_port: int, value: float):
