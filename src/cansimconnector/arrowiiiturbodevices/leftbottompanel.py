@@ -7,7 +7,7 @@ from cansimconnector.arrowiiiturbodevices import busvolts
 logger = logging.getLogger(__name__)
 
 
-class LeftBottomPane2(cansimlib.Device2):
+class LeftBottomPane2(cansimlib.Device):
     IGNITION_ON_VALUE = 4
 
     def __init__(self, sim, can):

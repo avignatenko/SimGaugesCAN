@@ -12,13 +12,13 @@ from cansimconnector.cansimlib.common import (
     send_command,
     src_id_from_canid,
 )
-from cansimconnector.cansimlib.devices import Device2
+from cansimconnector.cansimlib.devices import Device
 from cansimconnector.xplanewebclient import DatarefSubscription, XPlaneClient
 
 __all__ = [
     "CANClient",
     "CANMessageSubscription",
-    "Device2",
+    "Device",
     "DatarefSubscription",
     "XPlaneClient",
     "make_id",

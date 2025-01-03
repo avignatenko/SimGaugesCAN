@@ -6,7 +6,7 @@ from cansimconnector import cansimlib
 logger = logging.getLogger(__name__)
 
 
-class Transponder2(cansimlib.Device2):
+class Transponder2(cansimlib.Device):
     LED_VALUE_ON = 0.3
 
     def __init__(self, sim, can):

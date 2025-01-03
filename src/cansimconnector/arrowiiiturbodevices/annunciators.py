@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class LedGauge:
-    def __init__(self, device: cansimlib.Device2, can_port, dataref, index=None):
+    def __init__(self, device: cansimlib.Device, can_port, dataref, index=None):
         self._device = device
         self._dataref = dataref
         self._index = index
@@ -66,7 +66,7 @@ class LedGaugeMPR(LedGauge):
         return 1 if busvolts.electrics_on(volts) and mpr > LedGaugeMPR.MAX_MPR else 0
 
 
-class Annunciators2(cansimlib.Device2):
+class Annunciators2(cansimlib.Device):
     def __init__(self, sim, can):
         super().__init__(sim, can, can_id=26)
         super().enable_rate_limiter(1000)

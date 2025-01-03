@@ -12,7 +12,7 @@ from cansimconnector import xplanewebclient
 logger = logging.getLogger(__name__)
 
 
-class Device2:
+class Device:
     def __init__(self, sim: xplanewebclient.XPlaneClient, can: canclient.CANClient, can_id: int | None = None):
         self._sim = sim
         self._can = can

@@ -6,7 +6,7 @@ from cansimconnector import cansimlib
 logger = logging.getLogger(__name__)
 
 
-class TurnRoll2(cansimlib.Device2):
+class TurnRoll2(cansimlib.Device):
     def __init__(self, sim, can):
         super().__init__(sim, can, can_id=19)
 

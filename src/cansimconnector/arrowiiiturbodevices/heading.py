@@ -6,7 +6,7 @@ from cansimconnector import cansimlib
 logger = logging.getLogger(__name__)
 
 
-class Heading2(cansimlib.Device2):
+class Heading2(cansimlib.Device):
     def __init__(self, sim, can):
         super().__init__(sim, can, can_id=20)
         self._ap_bug_manual_knob_override_mode = False

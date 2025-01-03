@@ -5,7 +5,7 @@ from cansimconnector import cansimlib
 logger = logging.getLogger(__name__)
 
 
-class STec30Alt2(cansimlib.Device2):
+class STec30Alt2(cansimlib.Device):
     def __init__(self, sim, can):
         super().__init__(sim, can, can_id=32)
 
