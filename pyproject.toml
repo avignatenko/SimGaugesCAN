@@ -26,7 +26,7 @@ dev = ["pyinstaller"]
 test = ["coverage"]
 
 [project.scripts]
-cansimconnector = "cansimconnector:cansimconnector"
+cansimconnector = "cansimconnector.cli:cansimconnector"
 
 [tool.hatch.version]
 path = "src/cansimconnector/__about__.py"
