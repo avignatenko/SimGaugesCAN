@@ -10,14 +10,14 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
-  "click", 
-  "aiohttp", 
-  "pyserial", 
-  "python-can", 
-  "websockets", 
+  "click",
+  "aiohttp",
+  "pyserial",
+  "python-can",
   "asynciolimiter",
   'uvloop ; platform_system != "Windows"',
-  'winloop ; platform_system == "Windows"',]
+  'winloop ; platform_system == "Windows"',
+]
 
 dynamic = ["version"]
 
@@ -32,9 +32,7 @@ cansimconnector = "cansimconnector.cli:cansimconnector"
 path = "src/cansimconnector/__about__.py"
 
 [tool.hatch.envs.types]
-extra-dependencies = [
-  "mypy>=1.0.0",
-]
+extra-dependencies = ["mypy>=1.0.0"]
 
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/cansimconnector tests}"
@@ -43,20 +41,14 @@ check = "mypy --install-types --non-interactive {args:src/cansimconnector tests}
 source_pkgs = ["cansimconnector", "tests"]
 branch = true
 parallel = true
-omit = [
-  "src/hatch_demo/__about__.py",
-]
+omit = ["src/hatch_demo/__about__.py"]
 
 [tool.coverage.paths]
 hatch_demo = ["src/cansimconnector", "*/cansimconnector/src/cansimconnector"]
 tests = ["tests", "*/cansimconnector/tests"]
 
 [tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.hatch.build.targets.pyinstaller]
 require-runtime-dependencies = true
