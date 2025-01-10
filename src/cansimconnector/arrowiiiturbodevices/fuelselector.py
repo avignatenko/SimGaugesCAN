@@ -22,4 +22,4 @@ class FuelSelector2(cansimlib.Device):
             selector_map = {1: 1, 2: 3, 0: 0}
             xpl_selector = selector_map[value]
 
-            await self._sim.send_dataref(fuel_tank_selector_dataref_id, None, xpl_selector)
+            await self._sim.send_dataref(fuel_tank_selector_dataref_id, xpl_selector)
