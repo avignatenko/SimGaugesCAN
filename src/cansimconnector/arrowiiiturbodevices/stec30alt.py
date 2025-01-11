@@ -30,7 +30,7 @@ class STec30Alt2(cansimlib.Device):
             await self._sim.send_dataref(ap_on_dataref_id, self._on)
 
     async def _run_sim(self):
-        # custom dataref. 0 - no warning, 1 - pitch up, 2 - pitch down
+        # custom dataref. -- 0 - no warning, 1 - pitch up, 2 - pitch up more, 3 - pitch down, 4 - pitch down more
         pitch_trim_warning = await self.create_dataref_subscription("ai/cockpit/gauges/ap/pitch_trim_warning")
 
         while True:
@@ -39,10 +39,10 @@ class STec30Alt2(cansimlib.Device):
                 case 0:
                     await self.can_send_byte(2, 0)
                     await self.can_send_byte(3, 0)
-                case 1:
+                case 1 | 2:
                     await self.can_send_byte(2, 1)
                     await self.can_send_byte(3, 0)
-                case 2:
+                case 3 | 4:
                     await self.can_send_byte(2, 0)
                     await self.can_send_byte(3, 1)
                 case _:
